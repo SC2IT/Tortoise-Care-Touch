@@ -102,41 +102,62 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 
 ## Installation
 
-1. **Clone or download** this repository to your Raspberry Pi as `tortoise-care-touch`
+1. **Clone or download** this repository to your Raspberry Pi as `Tortoise-Care-Touch`
 2. **Navigate to the project directory**
    ```bash
-   cd tortoise-care-touch
+   cd Tortoise-Care-Touch
    ```
-3. **Run the installation script**:
+3. **Create and activate virtual environment**:
    ```bash
-   python3 install.py
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+4. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+5. **Initialize the application**:
+   ```bash
+   # Create directories
+   mkdir -p photos/{tortoises,plants/{leaves,flowers,full},growth}
+   mkdir -p data/backups
+   
+   # Initialize database
+   python -c "from database.db_manager import DatabaseManager; db = DatabaseManager(); db.initialize_database()"
+   
+   # Start the application
+   python main.py
    ```
 
+## Automated Installation Script
+
+For convenience, you can also use the installation script (will handle virtual environment setup):
+```bash
+python3 install.py
+```
+
 The installer will:
+- Create virtual environment automatically
 - Check Python version compatibility
-- Install required dependencies
+- Install required dependencies (including emoji support)
 - Set up directory structure
 - Initialize the SQLite database
 - Create desktop shortcuts
 - Offer autostart configuration
 
-## Manual Installation
+## Running the Application
 
-If you prefer manual setup:
+After installation, always activate the virtual environment first:
 
 ```bash
-# Install dependencies (includes new emoji support)
-pip3 install -r requirements.txt
+cd Tortoise-Care-Touch
+source venv/bin/activate
+python main.py
+```
 
-# Create directories
-mkdir -p photos/{tortoises,plants/{leaves,flowers,full},growth}
-mkdir -p data/backups
-
-# Initialize database
-python3 -c "from database.db_manager import DatabaseManager; db = DatabaseManager(); db.initialize_database()"
-
-# Start the application
-python3 main.py
+To deactivate the virtual environment when done:
+```bash
+deactivate
 ```
 
 ## Configuration
