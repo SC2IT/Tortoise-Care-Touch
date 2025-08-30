@@ -6,13 +6,34 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
 [![Kivy](https://img.shields.io/badge/UI-Kivy-brightgreen.svg)](https://kivy.org/)
 
-> **🚀 Alpha Release v0.1.2**: Core features working with improved 7" display UI! See [ALPHA_RELEASE.md](ALPHA_RELEASE.md) for current status.
+> **🚀 Major Release v0.2.0-alpha**: Comprehensive health monitoring system with emergency protocols and 60+ plant database! See [CHANGELOG.md](CHANGELOG.md) for full release notes.
 
 ## ✨ Alpha Features (Working Now)
 
+### 🏥 **Health Monitoring & Care Guides** ✅ NEW!
+- **Emergency protocols** with step-by-step poisoning response procedures
+- **Signs of healthy tortoise** interactive guide with physical and behavioral indicators
+- **Warning signs and illness detection** guide for early intervention
+- **Hermann's tortoise care guide** with species-specific requirements
+- **Seasonal care recommendations** including hibernation guidance
+- All content sourced from The Tortoise Table and veterinary authorities
+
+### 🚨 **Emergency Response System** ✅ NEW!
+- **Red alert emergency button** for immediate access to poisoning protocols
+- **Acute and cumulative poisoning symptoms** identification
+- **Emergency veterinary contact integration** (Settings → Connections)
+- **Step-by-step response procedures** from authoritative sources
+
+### 🌿 **Comprehensive Plant Database** ✅ EXPANDED!
+- **60+ plants** with detailed safety classifications (up from 10)
+- **Daily safe foods, caution plants, and toxic warnings**
+- **Scientific names, nutrition info, and feeding frequencies**
+- **Color-coded safety indicators** throughout the feeding system
+- **Proper source attribution** to The Tortoise Table plant database
+
 ### 🍃 **Feeding Tracking** ✅
 - Weight-based feeding session logging
-- Pre-loaded database of 10+ safe Hermann's tortoise plants
+- **Enhanced plant safety indicators** with green/yellow/red coding
 - Supplement tracking (calcium, vitamins, etc.)
 - Multi-user feeding logs with behavior notes
 - "Ate well" and "new food introduced" tracking
@@ -30,21 +51,27 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 ### 📱 **Touch Interface** ✅
 - Optimized for Pi Touch Display 2 (720x1280)
 - **Dynamic orientation detection** - auto-adapts portrait ↔ landscape
+- **Enhanced emoji support** for proper icon rendering on Pi display
 - Large, finger-friendly buttons and minimal typing
 - Touch-responsive navigation and forms
 
 ### ⚙️ **Settings & Setup** ✅
-- **Organized Settings Menu**: 4 clear categories without scrolling
+- **Individual settings screens** for each category (no more crashes!)
 - User Management, Tortoise Management, Connections, Database sections
 - Adafruit.IO integration configuration
 - Automated Pi installation with desktop shortcuts
 
+### ℹ️ **About & Attribution** ✅ NEW!
+- **Comprehensive source citations** for all plant and health data
+- **Technical framework acknowledgments** and dependencies
+- **Privacy policy** and data handling transparency
+- **License information** and contribution guidelines
+
 ## 🚧 Beta Features (Coming Soon)
 
-### 🏥 **Health Monitoring** 🔄
-- Vet visit records and health observations
-- Online resources integration for Hermann's tortoise care
-- Photo documentation and priority alerts
+### 📊 **Health Records Management** 🔄
+- Digital vet visit records and health observation tracking
+- Photo documentation and medication scheduling
 
 ### 🌡️ **Habitat Monitoring** 🔄
 - Real-time temperature and humidity via Adafruit.IO
@@ -63,8 +90,8 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 
 ### 🌿 **Enhanced Plant Database** 🔄
 - Plant photos (leaves, flowers, full plant)
-- Expanded nutritional information
 - Visual plant identification guide
+- Interactive feeding recommendations
 
 ## Hardware Requirements
 
@@ -98,7 +125,7 @@ The installer will:
 If you prefer manual setup:
 
 ```bash
-# Install dependencies
+# Install dependencies (includes new emoji support)
 pip3 install -r requirements.txt
 
 # Create directories
