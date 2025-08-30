@@ -2,6 +2,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
+from kivy.uix.popup import Popup
+import emoji
 from screens.base_screen import BaseScreen
 
 class SettingsMainScreen(BaseScreen):
@@ -46,28 +48,28 @@ class SettingsMainScreen(BaseScreen):
             size_hint_y=0.8
         )
         
-        # Category buttons with icons and descriptions
+        # Category buttons with text icons that render properly on Pi
         categories = [
             {
-                'title': '👥 User Management',
+                'title': f"{emoji.emojize(':busts_in_silhouette:')} User Management",
                 'subtitle': 'Add users, assign tasks, manage profiles',
                 'screen': 'settings_users',
                 'color': (0.2, 0.6, 0.4, 1)
             },
             {
-                'title': '🐢 Tortoise Management', 
+                'title': f"{emoji.emojize(':turtle:')} Tortoise Management", 
                 'subtitle': 'Add tortoises, edit profiles, view info',
                 'screen': 'settings_tortoises',
                 'color': (0.6, 0.4, 0.2, 1)
             },
             {
-                'title': '🔗 Connections',
+                'title': f"{emoji.emojize(':link:')} Connections",
                 'subtitle': 'Adafruit.IO, sensors, network settings',
                 'screen': 'settings_connections',
                 'color': (0.2, 0.4, 0.6, 1)
             },
             {
-                'title': '💾 Database',
+                'title': f"{emoji.emojize(':floppy_disk:')} Database",
                 'subtitle': 'Backup, restore, import/export data',
                 'screen': 'settings_database',
                 'color': (0.6, 0.2, 0.6, 1)

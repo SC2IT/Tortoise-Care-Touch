@@ -83,15 +83,34 @@ class HomeScreen(BaseScreen):
         
         main_layout.add_widget(nav_grid)
         
-        # Settings button
+        # Bottom buttons layout
+        bottom_layout = BoxLayout(
+            orientation='horizontal', 
+            size_hint_y=0.08 if self.is_portrait() else 0.1,
+            spacing=10
+        )
+        
+        # About button (small)
+        about_btn = Button(
+            text='About',
+            font_size=self.get_font_size('small'),
+            size_hint_x=0.25,
+            background_color=(0.3, 0.3, 0.5, 1)
+        )
+        about_btn.bind(on_press=lambda x: self.go_to_screen('about'))
+        bottom_layout.add_widget(about_btn)
+        
+        # Settings button (main)
         settings_btn = Button(
             text='Settings',
             font_size=self.get_font_size('medium'),
-            size_hint_y=0.08 if self.is_portrait() else 0.1,
+            size_hint_x=0.75,
             background_color=(0.4, 0.4, 0.4, 1)
         )
-        settings_btn.bind(on_press=lambda x: self.go_to_screen('settings'))
-        main_layout.add_widget(settings_btn)
+        settings_btn.bind(on_press=lambda x: self.go_to_screen('settings_main'))
+        bottom_layout.add_widget(settings_btn)
+        
+        main_layout.add_widget(bottom_layout)
         
         self.add_widget(main_layout)
     

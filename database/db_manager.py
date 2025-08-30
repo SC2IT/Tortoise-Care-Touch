@@ -205,18 +205,89 @@ class DatabaseManager:
                 VALUES (?, ?, ?)
             ''', (key, value, description))
         
-        # Insert default Hermann's tortoise safe plants
+        # Insert comprehensive tortoise plant database
         default_plants = [
-            ('Dandelion', 'Taraxacum officinale', 'safe', 'High in calcium, good for shell health', 'daily'),
-            ('Plantain', 'Plantago major', 'safe', 'Good source of fiber', '2-3 times per week'),
-            ('Clover', 'Trifolium species', 'safe', 'High protein content', '2-3 times per week'),
-            ('Rose petals', 'Rosa species', 'safe', 'Vitamin C, occasional treat', 'weekly'),
-            ('Hibiscus flowers', 'Hibiscus rosa-sinensis', 'safe', 'High in vitamin C', 'weekly'),
-            ('Mulberry leaves', 'Morus species', 'safe', 'Excellent nutrition', 'daily'),
-            ('Grape leaves', 'Vitis vinifera', 'safe', 'Good occasional food', '2-3 times per week'),
-            ('Chickweed', 'Stellaria media', 'safe', 'Good winter green', 'daily'),
+            # Daily safe foods - Feed freely
+            ('Dandelion', 'Taraxacum officinale', 'safe', 'High in calcium and vitamin A, excellent for shell health', 'daily'),
+            ('Plantain', 'Plantago major', 'safe', 'High fiber, good for digestive health', 'daily'),
+            ('Chickweed', 'Stellaria media', 'safe', 'Good winter green, high in vitamins', 'daily'),
+            ('Mallow', 'Malva species', 'safe', 'High in mucilage, good for digestion', 'daily'),
+            ('Sow thistle', 'Sonchus species', 'safe', 'High calcium, similar to dandelion', 'daily'),
+            ('Prickly pear cactus', 'Opuntia species', 'safe', 'High water content, good in hot weather', 'daily'),
+            ('Lambs lettuce', 'Valerianella locusta', 'safe', 'Mild flavor, good vitamin content', 'daily'),
+            ('Wild rocket', 'Diplotaxis tenuifolia', 'safe', 'Peppery flavor, high in calcium', 'daily'),
+            
+            # Weeds and wild plants - Safe daily
+            ('Cleavers', 'Galium aparine', 'safe', 'Good source of chlorophyll', 'daily'),
+            ('Goose grass', 'Galium aparine', 'safe', 'High in vitamins A and C', 'daily'),
+            ('White dead nettle', 'Lamium album', 'safe', 'Good source of calcium', 'daily'),
+            ('Cats ear', 'Hypochaeris radicata', 'safe', 'Similar to dandelion', 'daily'),
+            ('Shepherds purse', 'Capsella bursa-pastoris', 'safe', 'High in vitamin K', 'daily'),
+            ('Ribwort plantain', 'Plantago lanceolata', 'safe', 'Natural antibiotic properties', 'daily'),
+            
+            # Trees and shrubs - Safe moderation
+            ('Mulberry leaves', 'Morus species', 'safe', 'Excellent nutrition, very palatable', '2-3 times per week'),
+            ('Grape leaves', 'Vitis vinifera', 'safe', 'Good occasional food, not too much', '2-3 times per week'),
             ('Bramble leaves', 'Rubus species', 'safe', 'Blackberry/raspberry leaves', '2-3 times per week'),
-            ('Mallow', 'Malva species', 'safe', 'Good source of mucilage', '2-3 times per week')
+            ('Rose leaves', 'Rosa species', 'safe', 'Good roughage, thorns removed', '2-3 times per week'),
+            ('Apple leaves', 'Malus domestica', 'safe', 'Good fiber, avoid wilted leaves', '2-3 times per week'),
+            ('Linden leaves', 'Tilia species', 'safe', 'Pleasant taste, good nutrition', '2-3 times per week'),
+            ('Hazel leaves', 'Corylus avellana', 'safe', 'Good source of tannins', '2-3 times per week'),
+            
+            # Flowers - Safe treats
+            ('Hibiscus flowers', 'Hibiscus rosa-sinensis', 'safe', 'High in vitamin C, colorful', 'weekly'),
+            ('Rose petals', 'Rosa species', 'safe', 'Vitamin C, remove thorns', 'weekly'),
+            ('Nasturtium flowers', 'Tropaeolum majus', 'safe', 'Peppery flavor, high in vitamin C', 'weekly'),
+            ('Pansy', 'Viola tricolor', 'safe', 'Edible flowers, mild flavor', 'weekly'),
+            ('Calendula', 'Calendula officinalis', 'safe', 'Anti-inflammatory properties', 'weekly'),
+            ('Sunflower petals', 'Helianthus annuus', 'safe', 'Remove seeds, petals only', 'weekly'),
+            ('Geranium flowers', 'Pelargonium species', 'safe', 'Colorful treat, mild flavor', 'weekly'),
+            
+            # Vegetables and cultivated plants - Moderation
+            ('Rocket salad', 'Eruca sativa', 'safe', 'Peppery flavor, high calcium', '2-3 times per week'),
+            ('Watercress', 'Nasturtium officinale', 'safe', 'High in vitamins, peppery taste', '2-3 times per week'),
+            ('Endive', 'Cichorium endivia', 'safe', 'Good source of fiber and vitamins', '2-3 times per week'),
+            ('Radicchio', 'Cichorium intybus', 'safe', 'Bitter flavor, good for liver', '2-3 times per week'),
+            ('Mustard greens', 'Brassica juncea', 'caution', 'High in goitrogens, feed sparingly', 'weekly'),
+            ('Kale', 'Brassica oleracea', 'caution', 'High in goitrogens and oxalates', 'weekly'),
+            ('Collard greens', 'Brassica oleracea', 'caution', 'High calcium but also goitrogens', 'weekly'),
+            
+            # Herbs - Safe in moderation
+            ('Thyme', 'Thymus vulgaris', 'safe', 'Antiseptic properties, strong flavor', 'weekly'),
+            ('Oregano', 'Origanum vulgare', 'safe', 'Antibiotic properties, use sparingly', 'weekly'),
+            ('Sage', 'Salvia officinalis', 'safe', 'Strong flavor, digestive aid', 'weekly'),
+            ('Basil', 'Ocimum basilicum', 'safe', 'Aromatic herb, occasional treat', 'weekly'),
+            ('Parsley', 'Petroselinum crispum', 'caution', 'High in oxalates, occasional only', 'monthly'),
+            
+            # Grasses and cereals
+            ('Timothy grass', 'Phleum pratense', 'safe', 'Good fiber source', 'daily'),
+            ('Meadow grass', 'Poa species', 'safe', 'Natural grazing food', 'daily'),
+            ('Oat grass', 'Avena sativa', 'safe', 'Good when young and tender', 'daily'),
+            
+            # Fruits - Treats only
+            ('Apple', 'Malus domestica', 'safe', 'Remove seeds, occasional treat', 'weekly'),
+            ('Pear', 'Pyrus communis', 'safe', 'Remove seeds, high water content', 'weekly'),
+            ('Strawberry', 'Fragaria species', 'safe', 'Including leaves, occasional treat', 'weekly'),
+            ('Melon', 'Cucumis melo', 'safe', 'High water content, summer treat', 'weekly'),
+            ('Fig', 'Ficus carica', 'safe', 'High sugar, very occasional', 'monthly'),
+            
+            # Potentially problematic - Caution
+            ('Spinach', 'Spinacia oleracea', 'caution', 'Very high in oxalates', 'monthly'),
+            ('Beet greens', 'Beta vulgaris', 'caution', 'High in oxalates', 'monthly'),
+            ('Swiss chard', 'Beta vulgaris', 'caution', 'High in oxalates', 'monthly'),
+            ('Rhubarb leaves', 'Rheum rhabarbarum', 'toxic', 'Contain oxalic acid, never feed', 'never'),
+            
+            # Common toxic plants - Never feed
+            ('Buttercup', 'Ranunculus species', 'toxic', 'Contains ranunculin, causes blistering', 'never'),
+            ('Foxglove', 'Digitalis purpurea', 'toxic', 'Contains digitoxin, affects heart', 'never'),
+            ('Ivy', 'Hedera helix', 'toxic', 'Contains saponins, causes digestive issues', 'never'),
+            ('Daffodil', 'Narcissus species', 'toxic', 'Contains alkaloids, very poisonous', 'never'),
+            ('Azalea', 'Rhododendron species', 'toxic', 'Contains grayanotoxins', 'never'),
+            ('Oleander', 'Nerium oleander', 'toxic', 'Extremely poisonous, affects heart', 'never'),
+            ('Yew', 'Taxus baccata', 'toxic', 'Contains taxine, extremely dangerous', 'never'),
+            ('Potato leaves', 'Solanum tuberosum', 'toxic', 'Contains solanine', 'never'),
+            ('Tomato leaves', 'Solanum lycopersicum', 'toxic', 'Contains solanine', 'never'),
+            ('Avocado', 'Persea americana', 'toxic', 'Contains persin, toxic to reptiles', 'never')
         ]
         
         for name, scientific, safety, nutrition, frequency in default_plants:

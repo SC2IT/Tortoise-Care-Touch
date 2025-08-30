@@ -2,6 +2,58 @@
 
 All notable changes to Tortoise Care Touch will be documented in this file.
 
+## [0.2.0-alpha] - 2024-08-30
+
+### Major Feature Release - Health Monitoring & Care Guides
+
+### Added
+- **Comprehensive Health Monitoring System**
+  - Emergency protocols for poisoning and critical situations
+  - Signs of healthy tortoise interactive guide with physical and behavioral indicators
+  - Warning signs and illness detection guide
+  - Hermann's tortoise species-specific care guide
+  - Seasonal care recommendations and hibernation guidance
+
+- **Emergency Response Features**
+  - Red alert emergency protocols button for immediate access
+  - Step-by-step poisoning response procedures from The Tortoise Table
+  - Emergency veterinary contact integration (Settings → Connections)
+  - Acute and cumulative poisoning symptom identification
+
+- **Comprehensive Plant Database (60+ Plants)**
+  - Expanded from 10 to 60+ plants with detailed safety classifications
+  - Daily safe foods, caution plants, and toxic plant warnings
+  - Scientific names, nutrition information, and feeding frequencies
+  - Color-coded safety indicators (green/yellow/red) throughout feeding system
+
+- **About Page with Full Attribution**
+  - Comprehensive source citations for all plant and health data
+  - Proper attribution to The Tortoise Table, Tortoise Trust, and veterinary sources
+  - Technical framework acknowledgments and licensing information
+  - Privacy policy and data handling transparency
+
+- **Enhanced UI with Emoji Support**
+  - Added emoji dependency for proper icon rendering on Pi display
+  - Consistent iconography throughout health and feeding systems
+  - Visual indicators for plant safety levels and emergency protocols
+
+### Improved
+- **Individual Settings Screens**: Complete separation of settings categories to prevent navigation crashes
+- **Enhanced Plant Integration**: Plant safety indicators now appear in feeding system with proper color coding
+- **Source-Based Information**: All health and plant data properly cited with authoritative sources
+
+### Technical
+- Added emoji>=2.2.0 dependency for cross-platform icon support
+- Modular health screen architecture with popup-based detailed guides
+- Comprehensive database schema updates for expanded plant information
+- BaseScreen inheritance for consistent UI behavior across new screens
+
+### Sources & Attribution
+- Plant Database: The Tortoise Table (thetortoisetable.org.uk)
+- Health Monitoring: The Tortoise Table health guides and poisoning protocols
+- Veterinary Standards: Association of Reptilian and Amphibian Veterinarians (ARAV)
+- Species Care: Tortoise Trust and World Chelonian Trust guidelines
+
 ## [0.1.2-alpha] - 2024-08-30
 
 ### Improved

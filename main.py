@@ -25,6 +25,11 @@ from screens.reminders_screen import RemindersScreen
 from screens.plants_screen import PlantsScreen
 from screens.settings_screen import SettingsScreen
 from screens.settings_main_screen import SettingsMainScreen
+from screens.settings_users_screen import SettingsUsersScreen
+from screens.settings_tortoises_screen import SettingsTortoisesScreen
+from screens.settings_connections_screen import SettingsConnectionsScreen
+from screens.settings_database_screen import SettingsDatabaseScreen
+from screens.about_screen import AboutScreen
 
 # Configure Kivy for Pi Touch Display 2 with dynamic orientation
 Config.set('graphics', 'borderless', '1')
@@ -60,8 +65,13 @@ class TortoiseCareApp(App):
             GrowthScreen(name='growth', db_manager=self.db_manager),
             RemindersScreen(name='reminders', db_manager=self.db_manager),
             PlantsScreen(name='plants', db_manager=self.db_manager),
-            SettingsMainScreen(name='settings', db_manager=self.db_manager),
-            SettingsScreen(name='settings_users', db_manager=self.db_manager)
+            SettingsMainScreen(name='settings_main', db_manager=self.db_manager),
+            SettingsScreen(name='settings', db_manager=self.db_manager),
+            SettingsUsersScreen(name='settings_users', db_manager=self.db_manager),
+            SettingsTortoisesScreen(name='settings_tortoises', db_manager=self.db_manager),
+            SettingsConnectionsScreen(name='settings_connections', db_manager=self.db_manager),
+            SettingsDatabaseScreen(name='settings_database', db_manager=self.db_manager),
+            AboutScreen(name='about', db_manager=self.db_manager)
         ]
         
         # Set orientation manager for each screen and add to screen manager

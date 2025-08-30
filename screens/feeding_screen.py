@@ -9,6 +9,7 @@ from kivy.uix.spinner import Spinner
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.popup import Popup
 from datetime import datetime
+import emoji
 
 class FeedingScreen(Screen):
     def __init__(self, db_manager, **kwargs):
@@ -195,15 +196,15 @@ class FeedingScreen(Screen):
         
         # Add safe plants first
         safe_plants = [p['name'] for p in plants if p['safety_level'] == 'safe']
-        plant_options.extend([f"🟢 {name}" for name in safe_plants])
+        plant_options.extend([f"{emoji.emojize(':green_circle:')} {name}" for name in safe_plants])
         
         # Add caution plants
         caution_plants = [p['name'] for p in plants if p['safety_level'] == 'caution']
-        plant_options.extend([f"🟡 {name}" for name in caution_plants])
+        plant_options.extend([f"{emoji.emojize(':yellow_circle:')} {name}" for name in caution_plants])
         
         # Add common supplements
         supplements = ['Calcium Powder', 'Vitamin D3', 'Multivitamin', 'Cuttlebone']
-        plant_options.extend([f"💊 {supp}" for supp in supplements])
+        plant_options.extend([f"{emoji.emojize(':pill:')} {supp}" for supp in supplements])
         
         if plant_options:
             self.plant_spinner.values = plant_options
