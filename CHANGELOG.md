@@ -2,6 +2,17 @@
 
 All notable changes to Tortoise Care Touch will be documented in this file.
 
+## [0.1.1-alpha] - 2024-08-30
+
+### Fixed
+- **Orientation Detection**: Fixed window resize callback signature compatibility with newer Kivy versions
+- Resolved crash on Pi Touch Display 2 during window resize events
+- Improved error handling for orientation detection system
+
+### Technical
+- Updated `OrientationManager._on_window_resize()` to handle Kivy's size parameter correctly
+- Better compatibility with Raspberry Pi OS and system-installed Kivy packages
+
 ## [0.1.0-alpha] - 2024-08-30
 
 ### Added

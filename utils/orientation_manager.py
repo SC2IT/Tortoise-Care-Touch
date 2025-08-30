@@ -40,8 +40,9 @@ class OrientationManager(EventDispatcher):
             else:
                 return 'portrait'
     
-    def _on_window_resize(self, window, width, height):
+    def _on_window_resize(self, window, size):
         """Handle window resize events"""
+        width, height = size
         new_orientation = self._detect_orientation()
         
         if new_orientation != self.current_orientation:
