@@ -112,21 +112,26 @@ def check_files():
     return True
 
 def check_database():
-    """Check database connectivity"""
+    """Check database connectivity and performance"""
     print("\n=== DATABASE CHECK ===")
     
     try:
+        import time
         from database.db_manager import DatabaseManager
         print("✓ DatabaseManager imported successfully")
         
+        start_time = time.time()
         db = DatabaseManager()
-        print("✓ DatabaseManager instance created")
+        init_time = time.time() - start_time
+        print(f"✓ DatabaseManager instance created ({init_time:.3f}s)")
         
         # Try to connect to database
+        start_time = time.time()
         conn = db.get_connection()
-        print("✓ Database connection established")
+        connect_time = time.time() - start_time
+        print(f"✓ Database connection established ({connect_time:.3f}s)")
         
-        # Check if tables exist
+        # Check if tables exist and record count
         cursor = conn.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
         tables = cursor.fetchall()
@@ -134,9 +139,24 @@ def check_database():
         if tables:
             print(f"✓ Found {len(tables)} database tables:")
             for table in tables:
-                print(f"  - {table[0]}")
+                try:
+                    cursor.execute(f"SELECT COUNT(*) FROM {table[0]}")
+                    count = cursor.fetchone()[0]
+                    print(f"  - {table[0]}: {count} records")
+                except:
+                    print(f"  - {table[0]}: unable to count")
         else:
             print("⚠️  No tables found - database needs initialization")
+        
+        # Test plant database loading time
+        start_time = time.time()
+        cursor.execute("SELECT * FROM plants")
+        plants = cursor.fetchall()
+        plant_time = time.time() - start_time
+        print(f"✓ Plant database query: {len(plants)} plants ({plant_time:.3f}s)")
+        
+        if plant_time > 1.0:
+            print("⚠️  Plant database loading is slow - consider indexing")
         
         conn.close()
         return True
@@ -144,6 +164,108 @@ def check_database():
     except Exception as e:
         print(f"✗ Database error: {e}")
         traceback.print_exc()
+        return False
+
+def check_image_handling():
+    """Check image directories and PIL performance"""
+    print("\n=== IMAGE HANDLING CHECK ===")
+    
+    try:
+        import time
+        from PIL import Image
+        print("✓ PIL imported successfully")
+        
+        # Check image directories
+        image_dirs = [
+            'photos',
+            'photos/tortoises',
+            'photos/plants',
+            'photos/plants/leaves',
+            'photos/plants/flowers',
+            'photos/plants/full',
+            'photos/growth'
+        ]
+        
+        for img_dir in image_dirs:
+            if os.path.exists(img_dir):
+                files = os.listdir(img_dir)
+                img_files = [f for f in files if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp'))]
+                print(f"✓ {img_dir}: {len(img_files)} images, {len(files)} total files")
+                
+                # Check for large images that could slow loading
+                for img_file in img_files[:5]:  # Check first 5 images
+                    try:
+                        img_path = os.path.join(img_dir, img_file)
+                        size = os.path.getsize(img_path)
+                        if size > 1024 * 1024:  # > 1MB
+                            print(f"  ⚠️  Large image: {img_file} ({size/1024/1024:.1f}MB)")
+                    except:
+                        pass
+            else:
+                print(f"✗ {img_dir}: MISSING")
+        
+        # Test PIL performance with a simple operation
+        start_time = time.time()
+        test_img = Image.new('RGB', (100, 100), color='red')
+        pil_time = time.time() - start_time
+        print(f"✓ PIL image creation test: {pil_time:.3f}s")
+        
+        if pil_time > 0.1:
+            print("⚠️  PIL performance seems slow")
+        
+        return True
+        
+    except Exception as e:
+        print(f"✗ Image handling error: {e}")
+        traceback.print_exc()
+        return False
+
+def check_performance():
+    """Check system performance and resource usage"""
+    print("\n=== PERFORMANCE CHECK ===")
+    
+    try:
+        import time
+        
+        # Basic performance check without psutil
+        start_time = time.time()
+        test_list = [i for i in range(10000)]
+        cpu_test_time = time.time() - start_time
+        print(f"✓ CPU performance test: {cpu_test_time:.3f}s")
+        
+        if cpu_test_time > 0.1:
+            print("⚠️  CPU performance seems slow")
+        
+        # Check available disk space
+        if hasattr(os, 'statvfs'):  # Unix/Linux
+            statvfs = os.statvfs('.')
+            free_bytes = statvfs.f_frsize * statvfs.f_bavail
+            free_gb = free_bytes / (1024 * 1024 * 1024)
+            print(f"✓ Available disk space: {free_gb:.1f}GB")
+            
+            if free_gb < 1:
+                print("⚠️  Low disk space - less than 1GB available")
+        
+        # Try to get system info if available
+        try:
+            import psutil
+            cpu_percent = psutil.cpu_percent(interval=0.1)
+            memory = psutil.virtual_memory()
+            print(f"✓ CPU usage: {cpu_percent}%")
+            print(f"✓ Memory: {memory.percent}% used ({memory.available/1024/1024/1024:.1f}GB available)")
+            
+            if cpu_percent > 80:
+                print("⚠️  High CPU usage detected")
+            if memory.percent > 80:
+                print("⚠️  High memory usage detected")
+                
+        except ImportError:
+            print("? psutil not available - install with 'pip install psutil' for detailed system monitoring")
+            
+        return True
+        
+    except Exception as e:
+        print(f"✗ Performance check error: {e}")
         return False
 
 def start_app_with_debug():
@@ -190,6 +312,8 @@ if __name__ == "__main__":
     success &= check_environment()
     success &= check_files()
     success &= check_database()
+    success &= check_image_handling()
+    success &= check_performance()
     
     if success:
         print("\n✓ All checks passed! Starting application...")

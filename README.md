@@ -6,7 +6,7 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
 [![Kivy](https://img.shields.io/badge/UI-Kivy-brightgreen.svg)](https://kivy.org/)
 
-> **🚀 Major Release v0.2.0-alpha**: Comprehensive health monitoring system with emergency protocols and 60+ plant database! See [CHANGELOG.md](CHANGELOG.md) for full release notes.
+> **🚀 Performance Update v0.2.1-alpha**: Enhanced debug tools and optimized lite version for better performance! See [CHANGELOG.md](CHANGELOG.md) for full release notes.
 
 ## ✨ Alpha Features (Working Now)
 
@@ -156,7 +156,7 @@ python main.py
 ```
 
 ### Debug Mode
-If the application fails to start, use debug mode for detailed diagnostics:
+If the application fails to start or runs slowly, use debug mode for detailed diagnostics:
 
 ```bash
 source venv/bin/activate
@@ -166,9 +166,26 @@ python debug.py
 Debug mode provides:
 - Comprehensive dependency checking
 - File structure validation
-- Database connectivity testing
-- Verbose startup logging
+- Database connectivity and performance testing
+- Image handling and large file detection
+- System resource monitoring (CPU, memory, disk)
+- PIL performance analysis
+- Verbose startup logging with timing
 - Crash report generation
+
+### Performance Mode
+For slower systems or better responsiveness, use the optimized lite version:
+
+```bash
+source venv/bin/activate
+python main_lite.py
+```
+
+Lite version features:
+- Immediate startup with loading screen
+- Progressive screen loading (essential screens first)
+- Background loading of remaining features
+- Graphics optimizations for better performance
 
 To deactivate the virtual environment when done:
 ```bash

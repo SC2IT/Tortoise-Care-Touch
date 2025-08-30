@@ -2,6 +2,44 @@
 
 All notable changes to Tortoise Care Touch will be documented in this file.
 
+## [0.2.1-alpha] - 2024-08-30
+
+### Performance & Debugging Update
+
+### Added
+- **Enhanced Debug Tools**: Comprehensive performance analysis in debug.py
+  - Database query timing and optimization detection
+  - Image handling performance testing and large file detection
+  - System resource monitoring (CPU, memory, disk usage)
+  - PIL performance testing for image processing bottlenecks
+
+- **Performance-Optimized Lite Version** (main_lite.py)
+  - Progressive loading with immediate startup screen
+  - Essential screens (Home, Feeding) load first for instant usability
+  - Background loading of remaining screens while app is in use
+  - Graphics optimizations: 30fps limit, disabled vsync, SDL2 backend
+  - Reduced memory footprint and faster initialization
+
+### Improved
+- **Debug Script Performance Analysis**: Now measures exact timing for all operations
+  - Database connection and query benchmarking
+  - Plant database loading time analysis (60+ plants)
+  - Image directory scanning with size warnings for large files
+  - System performance baseline testing
+
+### Technical
+- **Optimized App Architecture**: Lite version uses progressive loading pattern
+- **Background Screen Loading**: Non-essential screens load asynchronously
+- **Performance Monitoring**: Enhanced debug output with millisecond timing
+- **Resource Usage Analysis**: CPU, memory, and storage monitoring integration
+- **Graphics Backend Optimization**: SDL2 and OpenGL configuration for better performance
+
+### Fixed
+- **Slow Loading Issues**: Lite version provides immediate responsiveness
+- **Image Handling Performance**: Debug tools identify problematic large image files
+- **Database Performance**: Timing analysis helps identify slow queries
+- **System Resource Bottlenecks**: Enhanced monitoring for performance issues
+
 ## [0.2.0-alpha] - 2024-08-30
 
 ### Major Feature Release - Health Monitoring & Care Guides
