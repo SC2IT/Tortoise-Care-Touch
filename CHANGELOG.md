@@ -47,6 +47,9 @@ All notable changes to Tortoise Care Touch will be documented in this file.
 - Modular health screen architecture with popup-based detailed guides
 - Comprehensive database schema updates for expanded plant information
 - BaseScreen inheritance for consistent UI behavior across new screens
+- **Debug Tools**: Added debug.py with comprehensive system diagnostics
+- **Enhanced Logging**: Verbose logging in main.py for troubleshooting
+- **Virtual Environment Support**: Updated installation for modern Python standards
 
 ### Sources & Attribution
 - Plant Database: The Tortoise Table (thetortoisetable.org.uk)

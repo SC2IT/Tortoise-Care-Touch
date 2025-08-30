@@ -7,6 +7,8 @@ Designed for Raspberry Pi 4 with Pi Touch Display 2
 
 import os
 import sys
+import logging
+import traceback
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
@@ -44,47 +46,86 @@ Config.set('graphics', 'height', '1280')
 class TortoiseCareApp(App):
     def __init__(self):
         super().__init__()
-        self.db_manager = DatabaseManager()
-        self.orientation_manager = OrientationManager()
+        try:
+            Logger.info("Tortoise Care Touch: Initializing application...")
+            self.db_manager = DatabaseManager()
+            Logger.info("Tortoise Care Touch: DatabaseManager created")
+            self.orientation_manager = OrientationManager()
+            Logger.info("Tortoise Care Touch: OrientationManager created")
+        except Exception as e:
+            Logger.error(f"Tortoise Care Touch: Initialization error: {e}")
+            traceback.print_exc()
+            raise
         
     def build(self):
-        self.title = "Tortoise Care Touch"
+        try:
+            Logger.info("Tortoise Care Touch: Building UI...")
+            self.title = "Tortoise Care Touch"
+            
+            # Initialize database
+            Logger.info("Tortoise Care Touch: Initializing database...")
+            self.db_manager.initialize_database()
+            Logger.info("Tortoise Care Touch: Database initialized successfully")
+            
+            # Create screen manager
+            Logger.info("Tortoise Care Touch: Creating screen manager...")
+            sm = ScreenManager()
+            
+            # Create all screens with error handling
+            Logger.info("Tortoise Care Touch: Creating screens...")
+            screen_configs = [
+                ('home', HomeScreen),
+                ('feeding', FeedingScreen),
+                ('health', HealthScreen),
+                ('habitat', HabitatScreen),
+                ('growth', GrowthScreen),
+                ('reminders', RemindersScreen),
+                ('plants', PlantsScreen),
+                ('settings_main', SettingsMainScreen),
+                ('settings', SettingsScreen),
+                ('settings_users', SettingsUsersScreen),
+                ('settings_tortoises', SettingsTortoisesScreen),
+                ('settings_connections', SettingsConnectionsScreen),
+                ('settings_database', SettingsDatabaseScreen),
+                ('about', AboutScreen)
+            ]
+            
+            screens = []
+            for screen_name, screen_class in screen_configs:
+                try:
+                    Logger.info(f"Tortoise Care Touch: Creating {screen_name} screen...")
+                    screen = screen_class(name=screen_name, db_manager=self.db_manager)
+                    screens.append(screen)
+                    Logger.info(f"Tortoise Care Touch: ✓ {screen_name} screen created")
+                except Exception as e:
+                    Logger.error(f"Tortoise Care Touch: ✗ Error creating {screen_name} screen: {e}")
+                    traceback.print_exc()
+                    raise
+            
+            # Set orientation manager for each screen and add to screen manager
+            Logger.info("Tortoise Care Touch: Setting up screens...")
+            for screen in screens:
+                try:
+                    if hasattr(screen, 'set_orientation_manager'):
+                        screen.set_orientation_manager(self.orientation_manager)
+                    sm.add_widget(screen)
+                    Logger.info(f"Tortoise Care Touch: ✓ {screen.name} screen added to manager")
+                except Exception as e:
+                    Logger.error(f"Tortoise Care Touch: ✗ Error setting up {screen.name} screen: {e}")
+                    traceback.print_exc()
+                    raise
+            
+            # Log initial orientation info
+            Logger.info(f"Tortoise Care Touch: App started with orientation: {self.orientation_manager.current_orientation}")
+            Logger.info(f"Tortoise Care Touch: Window info: {self.orientation_manager.get_window_info()}")
+            Logger.info("Tortoise Care Touch: UI build completed successfully!")
+            
+            return sm
         
-        # Initialize database
-        self.db_manager.initialize_database()
-        
-        # Create screen manager
-        sm = ScreenManager()
-        
-        # Create all screens
-        screens = [
-            HomeScreen(name='home', db_manager=self.db_manager),
-            FeedingScreen(name='feeding', db_manager=self.db_manager),
-            HealthScreen(name='health', db_manager=self.db_manager),
-            HabitatScreen(name='habitat', db_manager=self.db_manager),
-            GrowthScreen(name='growth', db_manager=self.db_manager),
-            RemindersScreen(name='reminders', db_manager=self.db_manager),
-            PlantsScreen(name='plants', db_manager=self.db_manager),
-            SettingsMainScreen(name='settings_main', db_manager=self.db_manager),
-            SettingsScreen(name='settings', db_manager=self.db_manager),
-            SettingsUsersScreen(name='settings_users', db_manager=self.db_manager),
-            SettingsTortoisesScreen(name='settings_tortoises', db_manager=self.db_manager),
-            SettingsConnectionsScreen(name='settings_connections', db_manager=self.db_manager),
-            SettingsDatabaseScreen(name='settings_database', db_manager=self.db_manager),
-            AboutScreen(name='about', db_manager=self.db_manager)
-        ]
-        
-        # Set orientation manager for each screen and add to screen manager
-        for screen in screens:
-            if hasattr(screen, 'set_orientation_manager'):
-                screen.set_orientation_manager(self.orientation_manager)
-            sm.add_widget(screen)
-        
-        # Log initial orientation info
-        Logger.info(f"App started with orientation: {self.orientation_manager.current_orientation}")
-        Logger.info(f"Window info: {self.orientation_manager.get_window_info()}")
-        
-        return sm
+        except Exception as e:
+            Logger.error(f"Tortoise Care Touch: Build error: {e}")
+            traceback.print_exc()
+            raise
 
     def on_stop(self):
         # Clean up database connection
