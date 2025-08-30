@@ -2,6 +2,31 @@
 
 All notable changes to Tortoise Care Touch will be documented in this file.
 
+## [0.1.2-alpha] - 2024-08-30
+
+### Improved
+- **UI/UX for 7" Display**: Significantly increased font sizes across the entire application
+  - Portrait: Large 28sp, Medium 22sp, Small 18sp (up from 20sp/16sp/14sp)
+  - Landscape: Large 24sp, Medium 20sp, Small 16sp (up from 18sp/14sp/12sp)
+- **Settings Menu Redesign**: Complete overhaul to eliminate scrolling
+  - New main settings screen with 4 large category buttons
+  - Separate sections: User Management, Tortoise Management, Connections, Database
+  - Clear navigation with descriptive subtitles and icons
+- **Touch Targets**: Increased button heights for better finger accessibility
+  - Portrait buttons: 70px height (up from 60px)
+  - Landscape buttons: 60px height (up from 50px)
+- **Better Visual Hierarchy**: Improved spacing and layout proportions for 7" screens
+
+### Added
+- **Settings Categories**: Organized settings into logical sections to avoid overwhelming single screen
+- **Version Display**: Settings now show current version and system status
+- **Breadcrumb Navigation**: Clear back button paths between settings sections
+
+### Technical
+- Enhanced BaseScreen orientation management with new font size calculations
+- Improved OrientationManager with better layout configurations for readability
+- Settings architecture now supports modular category screens
+
 ## [0.1.1-alpha] - 2024-08-30
 
 ### Fixed

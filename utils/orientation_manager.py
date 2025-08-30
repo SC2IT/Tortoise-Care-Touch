@@ -84,13 +84,13 @@ class OrientationManager(EventDispatcher):
                 'nav_columns': 1,      # Single column for portrait
                 'input_columns': 2,    # 2 columns for input forms
                 'input_rows': 2,       # 2 rows for input forms
-                'button_spacing': 15,  # More vertical spacing
-                'font_size_large': '20sp',
-                'font_size_medium': '16sp',
-                'font_size_small': '14sp',
-                'header_height': 0.08,
-                'button_height': 60,
-                'input_height': 50
+                'button_spacing': 20,  # More vertical spacing
+                'font_size_large': '28sp',    # Larger for 7" display
+                'font_size_medium': '22sp',   # More readable
+                'font_size_small': '18sp',    # Still readable
+                'header_height': 0.10,
+                'button_height': 70,          # Larger touch targets
+                'input_height': 60
             }
         else:  # landscape
             return {
@@ -98,12 +98,12 @@ class OrientationManager(EventDispatcher):
                 'input_columns': 4,    # 4 columns for input forms
                 'input_rows': 1,       # 1 row for input forms
                 'button_spacing': 20,  # More horizontal spacing
-                'font_size_large': '18sp',
-                'font_size_medium': '14sp',
-                'font_size_small': '12sp',
-                'header_height': 0.12,
-                'button_height': 50,
-                'input_height': 45
+                'font_size_large': '24sp',    # Larger for landscape too
+                'font_size_medium': '20sp',   # More readable
+                'font_size_small': '16sp',    # Still readable
+                'header_height': 0.15,
+                'button_height': 60,          # Larger touch targets
+                'input_height': 55
             }
     
     def force_orientation_check(self):

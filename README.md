@@ -6,7 +6,7 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
 [![Kivy](https://img.shields.io/badge/UI-Kivy-brightgreen.svg)](https://kivy.org/)
 
-> **🚀 Alpha Release v0.1.0**: Core features working! See [ALPHA_RELEASE.md](ALPHA_RELEASE.md) for current status and limitations.
+> **🚀 Alpha Release v0.1.2**: Core features working with improved 7" display UI! See [ALPHA_RELEASE.md](ALPHA_RELEASE.md) for current status.
 
 ## ✨ Alpha Features (Working Now)
 
@@ -34,8 +34,9 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 - Touch-responsive navigation and forms
 
 ### ⚙️ **Settings & Setup** ✅
+- **Organized Settings Menu**: 4 clear categories without scrolling
+- User Management, Tortoise Management, Connections, Database sections
 - Adafruit.IO integration configuration
-- User and tortoise management interfaces
 - Automated Pi installation with desktop shortcuts
 
 ## 🚧 Beta Features (Coming Soon)
