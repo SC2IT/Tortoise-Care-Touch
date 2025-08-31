@@ -5,7 +5,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 import emoji
 from screens.base_screen import BaseScreen
-from utils.icon_widgets import icon_widget
+from utils.simple_icons import get_button_text_with_icon
 
 class SettingsMainScreen(BaseScreen):
     """
@@ -23,18 +23,15 @@ class SettingsMainScreen(BaseScreen):
         # Header
         header_layout = BoxLayout(orientation='horizontal', size_hint_y=self.get_header_height())
         
-        # Create back button with icon
-        back_content = icon_widget.create_icon_button_content(
-            'back', 'Back', 
-            icon_size=(self.get_font_size('medium'), self.get_font_size('medium')),
-            spacing=10
-        )
+        # Create back button with simple text
+        back_text = get_button_text_with_icon('back', 'Back')
         
         back_btn = Button(
+            text=back_text,
+            font_size=self.get_font_size('medium'),
             size_hint_x=0.25,
             background_color=(0.4, 0.4, 0.4, 1)
         )
-        back_btn.add_widget(back_content)
         back_btn.bind(on_press=self.go_back)
         header_layout.add_widget(back_btn)
         
@@ -95,19 +92,15 @@ class SettingsMainScreen(BaseScreen):
                 spacing=5
             )
             
-            # Create button content with icon and text
-            button_content = icon_widget.create_icon_button_content(
-                category['icon'], 
-                category['title'],
-                icon_size=(self.get_font_size('large'), self.get_font_size('large')),
-                spacing=15
-            )
+            # Create button with simple text and emoji
+            button_text = get_button_text_with_icon(category['icon'], category['title'])
             
             main_btn = Button(
+                text=button_text,
+                font_size=self.get_font_size('medium'),
                 background_color=category['color'],
                 size_hint_y=0.6
             )
-            main_btn.add_widget(button_content)
             main_btn.bind(on_press=lambda x, screen=category['screen']: self.go_to_section(screen))
             
             subtitle = Label(

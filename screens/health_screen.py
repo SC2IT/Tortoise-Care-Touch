@@ -6,7 +6,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 import emoji
 from screens.base_screen import BaseScreen
-from utils.icon_widgets import icon_widget
+from utils.simple_icons import get_button_text_with_icon
 
 class HealthScreen(BaseScreen):
     """
@@ -24,38 +24,27 @@ class HealthScreen(BaseScreen):
         # Header
         header_layout = BoxLayout(orientation='horizontal', size_hint_y=self.get_header_height())
         
-        # Create back button with icon
-        back_content = icon_widget.create_icon_button_content(
-            'back', 'Back', 
-            icon_size=(self.get_font_size('medium'), self.get_font_size('medium')),
-            spacing=10
-        )
+        # Create back button with simple text
+        back_text = get_button_text_with_icon('back', 'Back')
         
         back_btn = Button(
+            text=back_text,
+            font_size=self.get_font_size('medium'),
             size_hint_x=0.25,
             background_color=(0.4, 0.4, 0.4, 1)
         )
-        back_btn.add_widget(back_content)
         back_btn.bind(on_press=self.go_back)
         header_layout.add_widget(back_btn)
         
         # Create title with medical icon
-        title_content = icon_widget.create_icon_button_content(
-            'medical', 'Health & Care',
-            icon_size=(self.get_font_size('large'), self.get_font_size('large')),
-            spacing=15
-        )
-        
-        # Set the text label color in the title content
-        for child in title_content.children:
-            if hasattr(child, 'color'):
-                child.color = (0.2, 0.6, 0.2, 1)
+        title_text = get_button_text_with_icon('medical', 'Health & Care')
         
         title = Label(
+            text=title_text,
+            font_size=self.get_font_size('large'),
             size_hint_x=0.75,
             color=(0.2, 0.6, 0.2, 1)
         )
-        title.add_widget(title_content)
         header_layout.add_widget(title)
         
         main_layout.add_widget(header_layout)
@@ -64,32 +53,26 @@ class HealthScreen(BaseScreen):
         emergency_layout = BoxLayout(orientation='horizontal', size_hint_y=0.08, spacing=10)
         
         # Emergency button with icon
-        emergency_content = icon_widget.create_icon_button_content(
-            'emergency', 'EMERGENCY PROTOCOLS',
-            icon_size=(self.get_font_size('medium'), self.get_font_size('medium')),
-            spacing=10
-        )
+        emergency_text = get_button_text_with_icon('emergency', 'EMERGENCY PROTOCOLS')
         
         emergency_btn = Button(
+            text=emergency_text,
+            font_size=self.get_font_size('medium'),
             background_color=(0.8, 0.2, 0.2, 1),
             size_hint_x=0.7
         )
-        emergency_btn.add_widget(emergency_content)
         emergency_btn.bind(on_press=self.show_emergency_protocols)
         emergency_layout.add_widget(emergency_btn)
         
         # Vet button with icon
-        vet_content = icon_widget.create_icon_button_content(
-            'phone', 'CALL VET',
-            icon_size=(self.get_font_size('medium'), self.get_font_size('medium')),
-            spacing=10
-        )
+        vet_text = get_button_text_with_icon('phone', 'CALL VET')
         
         vet_btn = Button(
+            text=vet_text,
+            font_size=self.get_font_size('medium'),
             background_color=(0.6, 0.2, 0.6, 1),
             size_hint_x=0.3
         )
-        vet_btn.add_widget(vet_content)
         vet_btn.bind(on_press=self.show_emergency_contacts)
         emergency_layout.add_widget(vet_btn)
         

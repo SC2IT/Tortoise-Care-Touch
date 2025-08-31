@@ -5,7 +5,7 @@ from kivy.uix.label import Label
 from kivy.clock import Clock
 from datetime import datetime
 from screens.base_screen import BaseScreen
-from utils.icon_widgets import icon_widget
+from utils.simple_icons import get_button_text_with_icon, has_openmoji_icons
 
 class HomeScreen(BaseScreen):
     def __init__(self, db_manager, **kwargs):
@@ -73,19 +73,15 @@ class HomeScreen(BaseScreen):
         ]
         
         for text, screen_name, color, icon_name in buttons:
-            # Create button content with icon and text
-            button_content = icon_widget.create_icon_button_content(
-                icon_name, 
-                text,
-                icon_size=(self.get_font_size('large'), self.get_font_size('large')),
-                spacing=10
-            )
+            # Use simple text with emoji fallback
+            button_text = get_button_text_with_icon(icon_name, text)
             
             btn = Button(
+                text=button_text,
+                font_size=self.get_font_size('medium'),
                 background_color=color,
                 size_hint=(1, 1)
             )
-            btn.add_widget(button_content)
             btn.bind(on_press=lambda x, screen=screen_name: self.go_to_screen(screen))
             nav_grid.add_widget(btn)
         
@@ -108,18 +104,15 @@ class HomeScreen(BaseScreen):
         about_btn.bind(on_press=lambda x: self.go_to_screen('about'))
         bottom_layout.add_widget(about_btn)
         
-        # Settings button (main) with icon
-        settings_content = icon_widget.create_icon_button_content(
-            'settings', 'Settings',
-            icon_size=(self.get_font_size('medium'), self.get_font_size('medium')),
-            spacing=10
-        )
+        # Settings button (main) with simple text
+        settings_text = get_button_text_with_icon('settings', 'Settings')
         
         settings_btn = Button(
+            text=settings_text,
+            font_size=self.get_font_size('medium'),
             size_hint_x=0.75,
             background_color=(0.4, 0.4, 0.4, 1)
         )
-        settings_btn.add_widget(settings_content)
         settings_btn.bind(on_press=lambda x: self.go_to_screen('settings_main'))
         bottom_layout.add_widget(settings_btn)
         

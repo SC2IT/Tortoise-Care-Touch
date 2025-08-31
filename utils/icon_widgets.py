@@ -37,23 +37,27 @@ class IconWidget:
     def create_icon_button_content(self, icon_name, text, icon_size=(24, 24), spacing=5):
         """
         Create a horizontal layout with icon and text for button content
-        Returns BoxLayout with icon and label
+        Returns BoxLayout with icon and label, or just text if icon fails
         """
         content = BoxLayout(orientation='horizontal', spacing=spacing)
         
-        # Add icon
-        icon = self.create_icon(icon_name, icon_size)
-        if icon:
-            icon.size_hint_x = None
-            icon.width = icon_size[0]
-            content.add_widget(icon)
+        # Try to add icon, but don't fail if it doesn't work
+        try:
+            icon = self.create_icon(icon_name, icon_size)
+            if icon:
+                icon.size_hint_x = None
+                icon.width = icon_size[0]
+                content.add_widget(icon)
+        except Exception as e:
+            print(f"Icon loading failed for {icon_name}: {e}")
         
-        # Add text label
+        # Always add text label as fallback
         label = Label(
             text=text,
             color=(1, 1, 1, 1),
             halign='left',
-            valign='middle'
+            valign='middle',
+            text_size=(None, None)
         )
         content.add_widget(label)
         
