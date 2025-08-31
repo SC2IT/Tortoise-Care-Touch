@@ -3,20 +3,19 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
-import emoji
 from screens.base_screen import BaseScreen
 
-class SettingsMainScreen(BaseScreen):
+class SettingsMainScreenFallback(BaseScreen):
     """
-    Main settings screen with large buttons for each settings category
-    Avoids scrolling by breaking settings into separate screens
+    Main settings screen with text symbols instead of emoji
+    Fallback version for systems with emoji rendering issues
     """
     
     def __init__(self, db_manager, **kwargs):
         super().__init__(db_manager=db_manager, **kwargs)
     
     def build_ui(self):
-        """Build main settings menu with large category buttons"""
+        """Build main settings menu with text symbols"""
         main_layout = BoxLayout(orientation='vertical', padding=20, spacing=self.get_button_spacing())
         
         # Header
@@ -41,35 +40,35 @@ class SettingsMainScreen(BaseScreen):
         
         main_layout.add_widget(header_layout)
         
-        # Settings category buttons
+        # Settings category buttons with text symbols
         settings_grid = GridLayout(
             cols=1,
             spacing=self.get_button_spacing(),
             size_hint_y=0.8
         )
         
-        # Category buttons with text icons that render properly on Pi
+        # Category buttons with simple text symbols that work everywhere
         categories = [
             {
-                'title': "👥 User Management",
+                'title': "[U] User Management",
                 'subtitle': 'Add users, assign tasks, manage profiles',
                 'screen': 'settings_users',
                 'color': (0.2, 0.6, 0.4, 1)
             },
             {
-                'title': "🐢 Tortoise Management", 
+                'title': "[T] Tortoise Management", 
                 'subtitle': 'Add tortoises, edit profiles, view info',
                 'screen': 'settings_tortoises',
                 'color': (0.6, 0.4, 0.2, 1)
             },
             {
-                'title': "🔗 Connections",
+                'title': "[C] Connections",
                 'subtitle': 'Adafruit.IO, sensors, network settings',
                 'screen': 'settings_connections',
                 'color': (0.2, 0.4, 0.6, 1)
             },
             {
-                'title': "💾 Database",
+                'title': "[D] Database",
                 'subtitle': 'Backup, restore, import/export data',
                 'screen': 'settings_database',
                 'color': (0.6, 0.2, 0.6, 1)
@@ -139,9 +138,7 @@ class SettingsMainScreen(BaseScreen):
     
     def go_to_section(self, screen_name):
         """Navigate to a specific settings section"""
-        # For now, show a placeholder - we'll implement the individual screens next
         if screen_name == 'settings_users':
-            # Navigate to user management screen
             self.manager.current = 'settings_users'
         else:
             section_name = screen_name.replace('settings_', '').replace('_', ' ').title()

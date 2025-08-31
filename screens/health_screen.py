@@ -33,7 +33,7 @@ class HealthScreen(BaseScreen):
         header_layout.add_widget(back_btn)
         
         title = Label(
-            text=f'{emoji.emojize(":medical_symbol:")} Health & Care',
+            text='⚕ Health & Care',
             font_size=self.get_font_size('large'),
             size_hint_x=0.75,
             color=(0.2, 0.6, 0.2, 1)
@@ -46,7 +46,7 @@ class HealthScreen(BaseScreen):
         emergency_layout = BoxLayout(orientation='horizontal', size_hint_y=0.08, spacing=10)
         
         emergency_btn = Button(
-            text=f'{emoji.emojize(":exclamation:")} EMERGENCY PROTOCOLS',
+            text='🚨 EMERGENCY PROTOCOLS',
             font_size=self.get_font_size('medium'),
             background_color=(0.8, 0.2, 0.2, 1),
             size_hint_x=0.7
