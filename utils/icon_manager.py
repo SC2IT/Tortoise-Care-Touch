@@ -26,14 +26,14 @@ class IconManager:
         'emergency': 'alert-triangle.png',
         'phone': 'phone.png',
         'home': 'heart.png',  # Use heart as fallback
-        'food': 'heart.png',  # Use heart as fallback
+        'food': 'apple.png',  # Proper apple icon for food
         'plant': 'heart.png',  # Use heart as fallback
         'growth': 'heart.png',  # Use heart as fallback
         'calendar': 'heart.png',  # Use heart as fallback
         'clipboard': 'heart.png',  # Use heart as fallback
         'pill': 'stethoscope.png',  # Use medical icon
         'warning': 'alert-triangle.png',
-        'tortoise': 'bug.png',  # Using bug as closest to tortoise
+        'tortoise': 'tortoise.png',  # Proper tortoise icon
         'back': 'arrow-left.png',
         'info': 'heart.png'  # Use heart as fallback
     }

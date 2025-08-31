@@ -19,14 +19,14 @@ ICON_MAP = {
     'emergency': 'alert-triangle.png',
     'phone': 'phone.png',
     'home': 'heart.png',
-    'food': 'heart.png',
+    'food': 'apple.png',  # Proper apple icon for food
     'plant': 'heart.png',
     'growth': 'heart.png',
     'calendar': 'heart.png',
     'clipboard': 'heart.png',
     'pill': 'stethoscope.png',
     'warning': 'alert-triangle.png',
-    'tortoise': 'bug.png',
+    'tortoise': 'tortoise.png',  # Proper tortoise icon
     'back': 'arrow-left.png',
     'info': 'heart.png'
 }

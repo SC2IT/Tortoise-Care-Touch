@@ -20,9 +20,12 @@ Tabler Icons are released under the MIT License.
 - `alert-triangle.svg` - Emergency/Warnings
 - `phone.svg` - Call veterinarian
 
+### Food Icons
+- `apple.svg` - Food/Feeding (Framework7 Icons, MIT License)
+
 ### Navigation Icons
 - `arrow-left.svg` - Back button
-- `bug.svg` - Tortoise representation (closest available)
+- `tortoise.svg` - Proper tortoise representation (Framework7 Icons, MIT License)
 
 ## Usage
 
