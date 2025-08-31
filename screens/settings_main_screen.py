@@ -5,6 +5,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 import emoji
 from screens.base_screen import BaseScreen
+from utils.icon_manager import IconManager
 
 class SettingsMainScreen(BaseScreen):
     """
@@ -22,12 +23,25 @@ class SettingsMainScreen(BaseScreen):
         # Header
         header_layout = BoxLayout(orientation='horizontal', size_hint_y=self.get_header_height())
         
-        back_btn = Button(
-            text='← Back',
-            size_hint_x=0.25,
+        # Create back button with icon
+        back_content = BoxLayout(orientation='horizontal', spacing=5)
+        back_icon = IconManager.create_icon_widget('back', size=(20, 20))
+        back_icon.size_hint_x = None
+        back_icon.width = 20
+        back_content.add_widget(back_icon)
+        
+        back_text = Label(
+            text='Back',
             font_size=self.get_font_size('medium'),
+            color=(1, 1, 1, 1)
+        )
+        back_content.add_widget(back_text)
+        
+        back_btn = Button(
+            size_hint_x=0.25,
             background_color=(0.4, 0.4, 0.4, 1)
         )
+        back_btn.add_widget(back_content)
         back_btn.bind(on_press=self.go_back)
         header_layout.add_widget(back_btn)
         
@@ -48,31 +62,35 @@ class SettingsMainScreen(BaseScreen):
             size_hint_y=0.8
         )
         
-        # Category buttons with text icons that render properly on Pi
+        # Category buttons with Tabler icon indicators
         categories = [
             {
                 'title': "👥 User Management",
                 'subtitle': 'Add users, assign tasks, manage profiles',
                 'screen': 'settings_users',
-                'color': (0.2, 0.6, 0.4, 1)
+                'color': (0.2, 0.6, 0.4, 1),
+                'icon': 'users'
             },
             {
                 'title': "🐢 Tortoise Management", 
                 'subtitle': 'Add tortoises, edit profiles, view info',
                 'screen': 'settings_tortoises',
-                'color': (0.6, 0.4, 0.2, 1)
+                'color': (0.6, 0.4, 0.2, 1),
+                'icon': 'bug'
             },
             {
-                'title': "🔗 Connections",
+                'title': "📡 Connections",
                 'subtitle': 'Adafruit.IO, sensors, network settings',
                 'screen': 'settings_connections',
-                'color': (0.2, 0.4, 0.6, 1)
+                'color': (0.2, 0.4, 0.6, 1),
+                'icon': 'wifi'
             },
             {
                 'title': "💾 Database",
                 'subtitle': 'Backup, restore, import/export data',
                 'screen': 'settings_database',
-                'color': (0.6, 0.2, 0.6, 1)
+                'color': (0.6, 0.2, 0.6, 1),
+                'icon': 'database'
             }
         ]
         
@@ -84,13 +102,35 @@ class SettingsMainScreen(BaseScreen):
                 spacing=5
             )
             
-            main_btn = Button(
+            # Create button with icon
+            button_content = BoxLayout(orientation='horizontal', spacing=10)
+            
+            # Add icon if available
+            icon_widget = IconManager.create_icon_widget(
+                category['icon'], 
+                size=(self.get_font_size('medium'), self.get_font_size('medium'))
+            )
+            icon_widget.size_hint_x = None
+            icon_widget.width = self.get_font_size('medium')
+            button_content.add_widget(icon_widget)
+            
+            # Add text label
+            text_label = Label(
                 text=category['title'],
                 font_size=self.get_font_size('medium'),
+                color=(1, 1, 1, 1),
+                halign='left',
+                valign='middle'
+            )
+            text_label.text_size = (None, None)
+            button_content.add_widget(text_label)
+            
+            main_btn = Button(
                 background_color=category['color'],
                 size_hint_y=0.6
             )
             main_btn.bind(on_press=lambda x, screen=category['screen']: self.go_to_section(screen))
+            main_btn.add_widget(button_content)
             
             subtitle = Label(
                 text=category['subtitle'],
