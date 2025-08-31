@@ -5,6 +5,7 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 import emoji
 from screens.base_screen import BaseScreen
+from utils.icon_widgets import icon_widget
 
 class SettingsMainScreen(BaseScreen):
     """
@@ -22,12 +23,18 @@ class SettingsMainScreen(BaseScreen):
         # Header
         header_layout = BoxLayout(orientation='horizontal', size_hint_y=self.get_header_height())
         
+        # Create back button with icon
+        back_content = icon_widget.create_icon_button_content(
+            'back', 'Back', 
+            icon_size=(self.get_font_size('medium'), self.get_font_size('medium')),
+            spacing=10
+        )
+        
         back_btn = Button(
-            text='← Back',
             size_hint_x=0.25,
-            font_size=self.get_font_size('medium'),
             background_color=(0.4, 0.4, 0.4, 1)
         )
+        back_btn.add_widget(back_content)
         back_btn.bind(on_press=self.go_back)
         header_layout.add_widget(back_btn)
         
@@ -48,31 +55,35 @@ class SettingsMainScreen(BaseScreen):
             size_hint_y=0.8
         )
         
-        # Category buttons
+        # Category buttons with OpenMoji icons
         categories = [
             {
                 'title': "User Management",
                 'subtitle': 'Add users, assign tasks, manage profiles',
                 'screen': 'settings_users',
-                'color': (0.2, 0.6, 0.4, 1)
+                'color': (0.2, 0.6, 0.4, 1),
+                'icon': 'users'
             },
             {
                 'title': "Tortoise Management", 
                 'subtitle': 'Add tortoises, edit profiles, view info',
                 'screen': 'settings_tortoises',
-                'color': (0.6, 0.4, 0.2, 1)
+                'color': (0.6, 0.4, 0.2, 1),
+                'icon': 'tortoise'
             },
             {
                 'title': "Connections",
                 'subtitle': 'Adafruit.IO, sensors, network settings',
                 'screen': 'settings_connections',
-                'color': (0.2, 0.4, 0.6, 1)
+                'color': (0.2, 0.4, 0.6, 1),
+                'icon': 'wifi'
             },
             {
                 'title': "Database",
                 'subtitle': 'Backup, restore, import/export data',
                 'screen': 'settings_database',
-                'color': (0.6, 0.2, 0.6, 1)
+                'color': (0.6, 0.2, 0.6, 1),
+                'icon': 'database'
             }
         ]
         
@@ -84,12 +95,19 @@ class SettingsMainScreen(BaseScreen):
                 spacing=5
             )
             
+            # Create button content with icon and text
+            button_content = icon_widget.create_icon_button_content(
+                category['icon'], 
+                category['title'],
+                icon_size=(self.get_font_size('large'), self.get_font_size('large')),
+                spacing=15
+            )
+            
             main_btn = Button(
-                text=category['title'],
-                font_size=self.get_font_size('medium'),
                 background_color=category['color'],
                 size_hint_y=0.6
             )
+            main_btn.add_widget(button_content)
             main_btn.bind(on_press=lambda x, screen=category['screen']: self.go_to_section(screen))
             
             subtitle = Label(
