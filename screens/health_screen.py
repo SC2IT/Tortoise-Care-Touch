@@ -169,7 +169,7 @@ class HealthScreen(BaseScreen):
         
         self.add_widget(main_layout)
     
-    def show_emergency_protocols(self):
+    def show_emergency_protocols(self, instance=None):
         """Display emergency protocols for poisoning and critical situations"""
         content = BoxLayout(orientation='vertical', padding=20, spacing=15)
         
@@ -253,11 +253,11 @@ Emergency Vet Contacts: [Configure in Settings → Connections]"""
         close_btn.bind(on_press=popup.dismiss)
         popup.open()
     
-    def show_emergency_contacts(self):
+    def show_emergency_contacts(self, instance=None):
         """Show emergency veterinary contacts"""
         self.show_popup('Emergency Contacts', 'Emergency veterinary contact management will be implemented in Settings → Connections.\n\nFor now, keep your exotic vet contact information readily available.')
     
-    def show_health_check_guide(self):
+    def show_health_check_guide(self, instance=None):
         """Display comprehensive healthy tortoise signs guide"""
         content = BoxLayout(orientation='vertical', padding=20, spacing=15)
         
@@ -368,15 +368,15 @@ Remember: Early detection of health issues significantly improves treatment outc
         close_btn.bind(on_press=popup.dismiss)
         popup.open()
     
-    def show_health_records(self):
+    def show_health_records(self, instance=None):
         """Show health records management"""
         self.show_popup('Health Records', 'Health records management system will be implemented soon!\n\nFeatures will include:\n• Vet visit tracking\n• Daily health observations\n• Photo documentation\n• Medication schedules')
     
-    def show_medications(self):
+    def show_medications(self, instance=None):
         """Show medication tracking"""
         self.show_popup('Medications', 'Medication tracking system will be implemented soon!\n\nFeatures will include:\n• Dosage scheduling\n• Treatment compliance\n• Medication reminders\n• Side effect monitoring')
     
-    def show_warning_signs(self):
+    def show_warning_signs(self, instance=None):
         """Display illness warning signs and symptoms"""
         content = BoxLayout(orientation='vertical', padding=20, spacing=15)
         
@@ -482,7 +482,7 @@ Emergency Protocols: See Emergency button for poisoning procedures."""
         close_btn.bind(on_press=popup.dismiss)
         popup.open()
     
-    def show_hermann_care_guide(self):
+    def show_hermann_care_guide(self, instance=None):
         """Show Hermann's tortoise specific care guide"""
         content = BoxLayout(orientation='vertical', padding=20, spacing=15)
         
@@ -627,11 +627,11 @@ VETERINARY CARE:
         close_btn.bind(on_press=popup.dismiss)
         popup.open()
     
-    def show_seasonal_care_guide(self):
+    def show_seasonal_care_guide(self, instance=None):
         """Show seasonal care variations guide"""
         self.show_popup('Seasonal Care', 'Seasonal care guide will be implemented soon!\n\nWill include:\n• Hibernation protocols\n• Breeding season care\n• Summer heat management\n• Spring emergence procedures')
     
-    def show_plant_safety_guide(self):
+    def show_plant_safety_guide(self, instance=None):
         """Show plant safety and poisoning prevention"""
         self.show_popup('Plant Safety', 'Advanced plant safety features are available in the Plant Database!\n\n• Comprehensive toxic plant list\n• Safety classifications\n• Feeding guidelines\n• Emergency poisoning protocols\n\nAccess via: Home → Plant Database')
     

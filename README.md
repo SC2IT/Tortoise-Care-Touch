@@ -6,7 +6,7 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
 [![Kivy](https://img.shields.io/badge/UI-Kivy-brightgreen.svg)](https://kivy.org/)
 
-> **🚀 Performance Update v0.2.1-alpha**: Enhanced debug tools and optimized lite version for better performance! See [CHANGELOG.md](CHANGELOG.md) for full release notes.
+> **🚀 Hotfix v0.2.2-alpha**: Critical bug fix for health screen crashes + performance improvements! See [CHANGELOG.md](CHANGELOG.md) for full release notes.
 
 ## ✨ Alpha Features (Working Now)
 

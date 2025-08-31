@@ -2,6 +2,20 @@
 
 All notable changes to Tortoise Care Touch will be documented in this file.
 
+## [0.2.2-alpha] - 2024-08-30
+
+### Critical Bug Fix
+
+### Fixed
+- **Health Screen Crash**: Fixed TypeError in button callbacks that was causing app crashes
+  - All health screen method callbacks now properly handle the `instance` parameter
+  - Emergency protocols, health guides, and care guides now work without crashing
+  - Resolved "takes 1 positional argument but 2 were given" error
+
+### Technical
+- Added `instance=None` parameter to all health screen callback methods
+- Improved button callback handling throughout the health monitoring system
+
 ## [0.2.1-alpha] - 2024-08-30
 
 ### Performance & Debugging Update
