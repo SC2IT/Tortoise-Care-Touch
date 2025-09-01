@@ -1,31 +1,38 @@
 # 🐢 Tortoise Care Touch
 
-A comprehensive touch-screen tortoise care tracking application designed for **Raspberry Pi 4** with **Pi Touch Display 2**. Built specifically for Hermann's tortoise care with multi-user support, habitat monitoring, and dynamic orientation support.
+A comprehensive touch-screen tortoise care tracking application designed for **Raspberry Pi 4** with **Pi Touch Display 2**. Built specifically for Hermann's tortoise care with multi-user support, habitat monitoring, and reliable Qt interface.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
-[![Kivy](https://img.shields.io/badge/UI-Kivy-brightgreen.svg)](https://kivy.org/)
+[![PySide6](https://img.shields.io/badge/UI-PySide6-brightgreen.svg)](https://doc.qt.io/qtforpython/)
 
-> **🚀 Hotfix v0.2.2-alpha**: Critical bug fix for health screen crashes + performance improvements! See [CHANGELOG.md](CHANGELOG.md) for full release notes.
+> **🚀 Version 0.3.0**: Complete PySide6/Qt conversion for reliable Pi OS compatibility! No more UI rendering issues or broken icons.
 
-## ✨ Alpha Features (Working Now)
+## ✨ Current Features (Production Ready)
 
-### 🏥 **Health Monitoring & Care Guides** ✅ NEW!
+### 🖥️ **Reliable Qt Interface** ✅ NEW!
+- **PySide6/Qt native widgets** - No more broken layouts or missing text
+- **Touch-optimized interface** with large 60-80px buttons for Pi Touch Display
+- **Professional styling** with consistent color schemes and native OS appearance
+- **Emoji icon support** that works reliably across all Pi OS versions
+- **Responsive design** adapts to different orientations and screen sizes
+
+### 🏥 **Health Monitoring & Care Guides** ✅
 - **Emergency protocols** with step-by-step poisoning response procedures
 - **Signs of healthy tortoise** interactive guide with physical and behavioral indicators
 - **Warning signs and illness detection** guide for early intervention
 - **Hermann's tortoise care guide** with species-specific requirements
-- **Seasonal care recommendations** including hibernation guidance
+- **Comprehensive scrollable dialogs** with detailed veterinary information
 - All content sourced from The Tortoise Table and veterinary authorities
 
-### 🚨 **Emergency Response System** ✅ NEW!
+### 🚨 **Emergency Response System** ✅
 - **Red alert emergency button** for immediate access to poisoning protocols
 - **Acute and cumulative poisoning symptoms** identification
 - **Emergency veterinary contact integration** (Settings → Connections)
 - **Step-by-step response procedures** from authoritative sources
 
-### 🌿 **Comprehensive Plant Database** ✅ EXPANDED!
-- **60+ plants** with detailed safety classifications (up from 10)
+### 🌿 **Comprehensive Plant Database** ✅
+- **60+ plants** with detailed safety classifications
 - **Daily safe foods, caution plants, and toxic warnings**
 - **Scientific names, nutrition info, and feeding frequencies**
 - **Color-coded safety indicators** throughout the feeding system
@@ -49,25 +56,19 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 - Growth monitoring framework
 
 ### 📱 **Touch Interface** ✅
-- Optimized for Pi Touch Display 2 (720x1280)
-- **Dynamic orientation detection** - auto-adapts portrait ↔ landscape
-- **Enhanced emoji support** for proper icon rendering on Pi display
-- Large, finger-friendly buttons and minimal typing
-- Touch-responsive navigation and forms
+- **Optimized for Pi Touch Display 2** (720x1280 resolution)
+- **Native Qt touch handling** with proper gesture recognition
+- **Large, finger-friendly buttons** and minimal typing required
+- **Professional Qt styling** with hover effects and touch feedback
+- **Scrollable content areas** for detailed information display
 
-### ⚙️ **Settings & Setup** ✅
-- **Individual settings screens** for each category (no more crashes!)
+### ⚙️ **Settings & Configuration** ✅
+- **Individual settings screens** for each category
 - User Management, Tortoise Management, Connections, Database sections
 - Adafruit.IO integration configuration
-- Automated Pi installation with desktop shortcuts
+- Version information and system status display
 
-### ℹ️ **About & Attribution** ✅ NEW!
-- **Comprehensive source citations** for all plant and health data
-- **Technical framework acknowledgments** and dependencies
-- **Privacy policy** and data handling transparency
-- **License information** and contribution guidelines
-
-## 🚧 Beta Features (Coming Soon)
+## 🚧 Upcoming Features
 
 ### 📊 **Health Records Management** 🔄
 - Digital vet visit records and health observation tracking
@@ -84,14 +85,9 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 - Growth charts and progress visualization
 
 ### ⏰ **Care Reminders** 🔄
-- Working task scheduling and notifications
+- Task scheduling and notifications
 - Daily, weekly, monthly care routines
 - Task completion tracking
-
-### 🌿 **Enhanced Plant Database** 🔄
-- Plant photos (leaves, flowers, full plant)
-- Visual plant identification guide
-- Interactive feeding recommendations
 
 ## Hardware Requirements
 
@@ -102,97 +98,60 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 
 ## Installation
 
-1. **Clone or download** this repository to your Raspberry Pi as `Tortoise-Care-Touch`
-2. **Navigate to the project directory**
+### Quick Start (Recommended)
+
+1. **Set up virtual environment** on your Pi:
    ```bash
+   mkdir ~/tortoise-care
+   cd ~/tortoise-care
+   python3 -m venv tortoise-env
+   source tortoise-env/bin/activate
+   ```
+
+2. **Install PySide6**:
+   ```bash
+   pip install PySide6
+   ```
+
+3. **Clone and run**:
+   ```bash
+   git clone https://github.com/SC2IT/Tortoise-Care-Touch.git
    cd Tortoise-Care-Touch
-   ```
-3. **Create and activate virtual environment**:
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-4. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-5. **Initialize the application**:
-   ```bash
-   # Create directories
-   mkdir -p photos/{tortoises,plants/{leaves,flowers,full},growth}
-   mkdir -p data/backups
-   
-   # Initialize database
-   python -c "from database.db_manager import DatabaseManager; db = DatabaseManager(); db.initialize_database()"
-   
-   # Start the application
-   python main.py
+   python main_qt.py --fullscreen
    ```
 
-## Automated Installation Script
+### Detailed Installation
 
-For convenience, you can also use the installation script (will handle virtual environment setup):
-```bash
-python3 install.py
-```
-
-The installer will:
-- Create virtual environment automatically
-- Check Python version compatibility
-- Install required dependencies (including emoji support)
-- Set up directory structure
-- Initialize the SQLite database
-- Create desktop shortcuts
-- Offer autostart configuration
+See [INSTALL_PI.md](INSTALL_PI.md) for comprehensive Pi installation instructions including:
+- System dependency setup
+- Virtual environment configuration
+- Troubleshooting guide
+- Auto-start service setup
 
 ## Running the Application
 
-After installation, always activate the virtual environment first:
-
+### Standard Mode
 ```bash
-cd Tortoise-Care-Touch
-source venv/bin/activate
-python main.py
+cd ~/tortoise-care/Tortoise-Care-Touch
+source ~/tortoise-care/tortoise-env/bin/activate
+python main_qt.py
 ```
 
-### Debug Mode
-If the application fails to start or runs slowly, use debug mode for detailed diagnostics:
-
+### Pi Touch Display (Fullscreen)
 ```bash
-source venv/bin/activate
-python debug.py
+python main_qt.py --fullscreen
 ```
 
-Debug mode provides:
-- Comprehensive dependency checking
-- File structure validation
-- Database connectivity and performance testing
-- Image handling and large file detection
-- System resource monitoring (CPU, memory, disk)
-- PIL performance analysis
-- Verbose startup logging with timing
-- Crash report generation
-
-### Performance Mode
-For slower systems or better responsiveness, use the optimized lite version:
-
+### Development Dependencies
+If you need to install additional packages:
 ```bash
-source venv/bin/activate
-python main_lite.py
-```
-
-Lite version features:
-- Immediate startup with loading screen
-- Progressive screen loading (essential screens first)
-- Background loading of remaining features
-- Graphics optimizations for better performance
-
-To deactivate the virtual environment when done:
-```bash
-deactivate
+pip install -r requirements.txt
 ```
 
 ## Configuration
+
+### Database Setup
+The application automatically creates an SQLite database on first run. No manual database setup required.
 
 ### Adafruit.IO Setup
 1. Create an account at [io.adafruit.com](https://io.adafruit.com)
@@ -201,39 +160,9 @@ deactivate
 4. Configure settings in the application Settings screen
 
 ### Photo Import
-- Set up a folder for automatic photo import (default: `/home/pi/tortoise_photos`)
+- Set up a folder for automatic photo import
 - Photos copied to this folder will be automatically imported
-- Supports iPhone photo sharing via various methods
-
-### Pi Touch Display 2 Optimization
-The application is optimized for Pi Touch Display 2 with:
-- Large, finger-friendly buttons (720x1280 portrait resolution)
-- Portrait layout with single-column navigation for easier touch
-- Minimal text input requirements
-- Scrollable lists and forms optimized for vertical space
-- Popup confirmations for important actions
-- Improved touch response and gesture recognition
-- Multi-touch disabled for better single-touch accuracy
-
-## Usage
-
-### First Time Setup
-1. **Add Users**: Set up family members who will care for the tortoises
-2. **Add Tortoises**: Register your Hermann's tortoises with basic info
-3. **Configure Habitat Monitoring**: Set up Adafruit.IO integration
-4. **Review Plant Database**: Familiarize yourself with safe plants
-
-### Daily Use
-1. **Record Feedings**: Track what and how much you feed
-2. **Monitor Habitat**: Check temperature/humidity readings
-3. **Complete Reminders**: Mark off daily care tasks
-4. **Add Observations**: Note any health or behavior changes
-
-### Weekly/Monthly Tasks
-1. **Weight Measurements**: Record growth data
-2. **Photo Documentation**: Take progress photos
-3. **Health Check**: Schedule and record vet visits
-4. **Review Data**: Analyze feeding patterns and growth
+- Supports various photo formats and mobile device sharing
 
 ## Database Structure
 
@@ -248,30 +177,41 @@ The application uses SQLite with tables for:
 
 ## Development
 
-### Adding New Features
-The application uses a modular screen-based architecture:
-- `screens/` - Individual screen implementations
-- `database/` - Database management and queries
-- `main.py` - Application entry point and navigation
+### Architecture
+- `main_qt.py` - Main PySide6 application entry point
+- `qt_screens/` - All screen implementations using Qt widgets
+- `qt_screens/base_screen.py` - Common UI components and styling
+- `database/` - SQLite database management and queries
+- `utils/` - Utility functions and helpers
 
-### Customization
-- Modify plant database for other tortoise species
-- Adjust UI colors and sizes in screen files
-- Add custom sensor integrations
-- Extend reminder system for specialized care
+### Adding New Features
+The application uses a modular screen-based architecture with Qt's signal/slot system for navigation and data updates.
+
+## Advantages Over Previous Versions
+
+✅ **Reliable Rendering**: Native Qt widgets eliminate UI crashes and broken layouts  
+✅ **Professional Appearance**: Native OS styling with consistent theming  
+✅ **Better Touch Support**: Proper Qt touch event handling  
+✅ **Emoji Icons**: Built-in Unicode support works across all Pi OS versions  
+✅ **Performance**: More efficient memory usage and faster rendering  
+✅ **Maintainability**: Clean Qt architecture with proper separation of concerns  
 
 ## Troubleshooting
 
 ### Common Issues
-- **Application won't start**: Run `python debug.py` for detailed diagnostics
-- **Missing dependencies**: Use virtual environment and check `pip install -r requirements.txt`
-- **Touch not working**: Check screen calibration and Kivy touch settings
-- **Database errors**: Ensure proper permissions and disk space
+- **PySide6 installation fails**: Use virtual environment and see [INSTALL_PI.md](INSTALL_PI.md)
+- **Application won't start**: Check Python version and dependencies
+- **Touch not working**: Verify Pi Touch Display drivers and calibration
+- **Database errors**: Ensure proper file permissions and disk space
 - **Sensor connectivity**: Verify Adafruit.IO credentials and network
-- **Photo import**: Check folder permissions and file formats
+
+### Alternative UI Frameworks
+If PySide6 doesn't work on your system:
+- **PyQt5**: `sudo apt install python3-pyqt5`
+- **Tkinter**: Usually pre-installed with Python
 
 ### Support
-This application was designed specifically for Hermann's tortoise care. For issues or feature requests, please check the documentation or modify the code as needed for your setup.
+This application is designed specifically for Hermann's tortoise care. For issues or feature requests, please check the documentation or modify the code as needed for your setup.
 
 ## License
 
@@ -279,4 +219,4 @@ This project is designed for personal use in tortoise care. Feel free to modify 
 
 ---
 
-*Built with ❤️ for Hermann's tortoise care*
+*Built with ❤️ for Hermann's tortoise care using PySide6/Qt*
