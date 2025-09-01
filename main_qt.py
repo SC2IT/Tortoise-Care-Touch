@@ -15,12 +15,21 @@ from PySide6.QtGui import QFont
 from qt_screens.home_screen import HomeScreen
 from qt_screens.settings_main_screen import SettingsMainScreen
 from qt_screens.health_screen import HealthScreen
+from qt_screens.health_records_screen import HealthRecordsScreen
+from qt_screens.settings_connections_screen import SettingsConnectionsScreen
+from qt_screens.habitat_monitor_screen import HabitatMonitorScreen
+from qt_screens.growth_tracking_screen import GrowthTrackingScreen
+from qt_screens.care_reminders_screen import CareRemindersScreen
 from qt_screens.placeholder_screen import PlaceholderScreen
 from qt_screens.settings_users_screen import SettingsUsersScreen
 from qt_screens.settings_tortoises_screen import SettingsTortoisesScreen
+from qt_screens.tortoise_selection_screen import TortoiseSelectionScreen
 
 # Import database
 from database.db_manager import DatabaseManager
+
+# Import photo server
+from photo_server import run_photo_server_background
 
 class TortoiseCareApp(QMainWindow):
     """Main application window with screen management"""
@@ -38,6 +47,13 @@ class TortoiseCareApp(QMainWindow):
         except Exception as e:
             print(f"Database initialization error: {e}")
         
+        # Start photo upload server in background
+        try:
+            self.photo_server_thread = run_photo_server_background()
+            print("Photo upload server started successfully")
+        except Exception as e:
+            print(f"Warning: Could not start photo server: {e}")
+        
         # Initialize UI
         self.init_ui()
         self.setup_screens()
@@ -45,7 +61,8 @@ class TortoiseCareApp(QMainWindow):
     def init_ui(self):
         """Initialize main application window"""
         self.setWindowTitle('Tortoise Care Touch - PySide6')
-        self.setGeometry(100, 100, 800, 480)  # Pi Touch Display 2 resolution
+        self.setGeometry(100, 100, 1280, 720)  # 7-inch landscape touch screen resolution
+        self.setFixedSize(1280, 720)  # Force exact 7-inch landscape touch display resolution for testing
         
         # Enable touch events
         self.setAttribute(Qt.WA_AcceptTouchEvents)
@@ -76,12 +93,35 @@ class TortoiseCareApp(QMainWindow):
         self.screens['health'] = HealthScreen(self.db_manager, self)
         self.stacked_widget.addWidget(self.screens['health'])
         
+        # Health records screen
+        self.screens['health_records'] = HealthRecordsScreen(self.db_manager, self)
+        self.stacked_widget.addWidget(self.screens['health_records'])
+        
         # Settings sub-screens (functional)
         self.screens['settings_users'] = SettingsUsersScreen(self.db_manager, self)
         self.stacked_widget.addWidget(self.screens['settings_users'])
         
         self.screens['settings_tortoises'] = SettingsTortoisesScreen(self.db_manager, self)
         self.stacked_widget.addWidget(self.screens['settings_tortoises'])
+        
+        self.screens['settings_connections'] = SettingsConnectionsScreen(self.db_manager, self)
+        self.stacked_widget.addWidget(self.screens['settings_connections'])
+        
+        # Tortoise selection screens for different purposes
+        self.screens['select_tortoise_feeding'] = TortoiseSelectionScreen(
+            self.db_manager, self, return_screen='home', action_name='Feeding'
+        )
+        self.stacked_widget.addWidget(self.screens['select_tortoise_feeding'])
+        
+        self.screens['select_tortoise_health'] = TortoiseSelectionScreen(
+            self.db_manager, self, return_screen='home', action_name='Health Records'
+        )
+        self.stacked_widget.addWidget(self.screens['select_tortoise_health'])
+        
+        self.screens['select_tortoise_care'] = TortoiseSelectionScreen(
+            self.db_manager, self, return_screen='home', action_name='Care Entry'
+        )
+        self.stacked_widget.addWidget(self.screens['select_tortoise_care'])
         
         # Placeholder screens for unimplemented features
         
@@ -102,51 +142,15 @@ class TortoiseCareApp(QMainWindow):
         self.stacked_widget.addWidget(self.screens['feeding'])
         
         # Habitat monitoring screen
-        self.screens['habitat'] = PlaceholderScreen(
-            self.db_manager, self,
-            'Habitat Monitor',
-            'Real-time temperature and humidity monitoring via Adafruit.IO.',
-            [
-                'Live temperature and humidity readings',
-                'Adafruit.IO sensor integration',
-                'Alert system for out-of-range conditions',
-                'Historical data logging and charts',
-                'Multiple sensor support',
-                'Automated data collection'
-            ]
-        )
+        self.screens['habitat'] = HabitatMonitorScreen(self.db_manager, self)
         self.stacked_widget.addWidget(self.screens['habitat'])
         
         # Growth tracking screen
-        self.screens['growth'] = PlaceholderScreen(
-            self.db_manager, self,
-            'Growth Tracking',
-            'Photo documentation and measurement tracking system.',
-            [
-                'Photo import from mobile devices',
-                'Weight and size measurements',
-                'Growth charts and visualizations',
-                'Progress comparison over time',
-                'Photo gallery with timestamps',
-                'Measurement history tracking'
-            ]
-        )
+        self.screens['growth'] = GrowthTrackingScreen(self.db_manager, self)
         self.stacked_widget.addWidget(self.screens['growth'])
         
         # Care reminders screen
-        self.screens['reminders'] = PlaceholderScreen(
-            self.db_manager, self,
-            'Care Reminders',
-            'Task scheduling and notification system for daily tortoise care.',
-            [
-                'Daily, weekly, monthly care routines',
-                'Task completion tracking',
-                'Multi-user task assignments',
-                'Notification system',
-                'Care schedule customization',
-                'Task history and compliance'
-            ]
-        )
+        self.screens['reminders'] = CareRemindersScreen(self.db_manager, self)
         self.stacked_widget.addWidget(self.screens['reminders'])
         
         # Plant database screen
@@ -213,8 +217,8 @@ def main():
     app.setApplicationName("Tortoise Care Touch")
     app.setApplicationVersion("0.3.0-qt")
     
-    # Enable high DPI scaling for touch displays
-    app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    # Enable high DPI scaling for touch displays (Qt 6.0+ handles this automatically)
+    # app.setAttribute(Qt.AA_EnableHighDpiScaling, True)  # Deprecated in Qt 6+
     
     # Create and show main window
     window = TortoiseCareApp()

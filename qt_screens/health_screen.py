@@ -182,17 +182,8 @@ class HealthScreen(BaseScreen):
                              self.get_health_check_text())
         
     def show_health_records(self):
-        """Show health records management"""
-        msg = QMessageBox(self)
-        msg.setWindowTitle('Health Records')
-        msg.setText('Health records management system will be implemented soon!\n\n'
-                   'Features will include:\n'
-                   '• Vet visit tracking\n'
-                   '• Daily health observations\n'
-                   '• Photo documentation\n'
-                   '• Medication schedules')
-        msg.setIcon(QMessageBox.Information)
-        msg.exec()
+        """Navigate to health records management screen"""
+        self.main_window.show_screen('health_records')
         
     def show_medications(self):
         """Show medication tracking"""

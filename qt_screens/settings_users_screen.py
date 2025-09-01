@@ -310,27 +310,6 @@ class SettingsUsersScreen(BaseScreen):
         add_user_btn.setMinimumHeight(50)
         action_layout.addWidget(add_user_btn)
         
-        # Refresh button
-        refresh_btn = create_icon_button('activity', 'Refresh', (20, 20), self.refresh_users)
-        refresh_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #2196F3;
-                color: white;
-                border: none;
-                border-radius: 8px;
-                padding: 10px;
-                font-weight: bold;
-                font-size: 14px;
-                text-align: left;
-                padding-left: 15px;
-            }
-            QPushButton:hover { background-color: #1976D2; }
-            QPushButton:pressed { background-color: #1565C0; }
-        """)
-        refresh_btn.setMinimumHeight(50)
-        refresh_btn.setMaximumWidth(120)
-        action_layout.addWidget(refresh_btn)
-        
         # Show inactive users checkbox
         self.show_inactive_checkbox = QCheckBox('Show inactive users')
         self.show_inactive_checkbox.setStyleSheet("""
@@ -389,11 +368,14 @@ class SettingsUsersScreen(BaseScreen):
         
     def refresh_users(self):
         """Refresh the users list"""
-        # Clear existing users
-        for i in reversed(range(self.users_layout.count())):
-            child = self.users_layout.itemAt(i).widget()
-            if child:
-                child.setParent(None)
+        # Clear existing users - remove all items including widgets and spacers
+        while self.users_layout.count():
+            item = self.users_layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+            elif item.spacerItem():
+                # Spacer items don't need explicit deletion
+                pass
         
         # Get users from database
         try:
@@ -503,7 +485,7 @@ class SettingsUsersScreen(BaseScreen):
         
         # Edit button
         edit_btn = create_icon_button('edit', 'Edit', (16, 16), 
-                                     lambda user_data=user: self.edit_user(user_data))
+                                     lambda checked=False, user_data=user: self.edit_user(user_data))
         edit_btn.setMaximumHeight(30)
         edit_btn.setStyleSheet("""
             QPushButton {
@@ -525,7 +507,7 @@ class SettingsUsersScreen(BaseScreen):
         is_active = user.get('is_active', 1)
         if is_active:
             deactivate_btn = create_icon_button('x', 'Deactivate', (16, 16),
-                                               lambda user_data=user: self.deactivate_user(user_data))
+                                               lambda checked=False, user_data=user: self.deactivate_user(user_data))
             deactivate_btn.setMaximumHeight(30)
             deactivate_btn.setStyleSheet("""
                 QPushButton {
@@ -544,7 +526,7 @@ class SettingsUsersScreen(BaseScreen):
             actions_layout.addWidget(deactivate_btn)
         else:
             activate_btn = create_icon_button('check', 'Activate', (16, 16),
-                                             lambda user_data=user: self.activate_user(user_data))
+                                             lambda checked=False, user_data=user: self.activate_user(user_data))
             activate_btn.setMaximumHeight(30)
             activate_btn.setStyleSheet("""
                 QPushButton {

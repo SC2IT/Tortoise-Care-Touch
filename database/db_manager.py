@@ -40,6 +40,12 @@ class DatabaseManager:
             cursor.execute('ALTER TABLE users ADD COLUMN role TEXT DEFAULT "Caregiver"')
         except sqlite3.OperationalError:
             pass  # Column already exists
+            
+        # Add physical_description column if it doesn't exist
+        try:
+            cursor.execute('ALTER TABLE tortoises ADD COLUMN physical_description TEXT')
+        except sqlite3.OperationalError:
+            pass  # Column already exists
         
         # Tortoises table
         cursor.execute('''
@@ -53,6 +59,7 @@ class DatabaseManager:
                 acquisition_date DATE,
                 current_weight REAL,
                 notes TEXT,
+                physical_description TEXT,
                 photo_path TEXT,
                 is_active BOOLEAN DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -390,11 +397,11 @@ class DatabaseManager:
         conn = self.get_connection()
         cursor = conn.cursor()
         cursor.execute('''
-            INSERT INTO tortoises (name, species, subspecies, sex, birth_date, acquisition_date, current_weight, notes, photo_path) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO tortoises (name, species, subspecies, sex, birth_date, acquisition_date, current_weight, notes, physical_description, photo_path) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (name, species, kwargs.get('subspecies'), kwargs.get('sex'), 
               kwargs.get('birth_date'), kwargs.get('acquisition_date'),
-              kwargs.get('current_weight'), kwargs.get('notes'), kwargs.get('photo_path')))
+              kwargs.get('current_weight'), kwargs.get('notes'), kwargs.get('physical_description'), kwargs.get('photo_path')))
         conn.commit()
         return cursor.lastrowid
     
@@ -404,6 +411,60 @@ class DatabaseManager:
         cursor.execute('SELECT * FROM tortoises WHERE is_active = 1 ORDER BY name')
         return [dict(row) for row in cursor.fetchall()]
     
+    def get_all_tortoises(self) -> List[Dict]:
+        """Get all active tortoises - alias for compatibility"""
+        return self.get_tortoises()
+    
+    def get_tortoise_by_id(self, tortoise_id: int) -> Dict:
+        """Get a single tortoise by ID"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM tortoises WHERE id = ? AND is_active = 1', (tortoise_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+    
+    def update_tortoise_photo(self, tortoise_id: int, photo_path: str):
+        """Update the photo path for a tortoise"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('UPDATE tortoises SET photo_path = ? WHERE id = ?', (photo_path, tortoise_id))
+        conn.commit()
+    
+    def update_tortoise(self, tortoise_id: int, **kwargs):
+        """Update tortoise information"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        # Build dynamic update query
+        fields = []
+        values = []
+        
+        for field in ['name', 'species', 'subspecies', 'sex', 'birth_date', 
+                     'acquisition_date', 'current_weight', 'notes', 'physical_description']:
+            if field in kwargs:
+                fields.append(f"{field} = ?")
+                values.append(kwargs[field])
+        
+        if fields:
+            query = f"UPDATE tortoises SET {', '.join(fields)} WHERE id = ?"
+            values.append(tortoise_id)
+            cursor.execute(query, values)
+            conn.commit()
+    
+    def deactivate_tortoise(self, tortoise_id: int):
+        """Deactivate a tortoise"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('UPDATE tortoises SET is_active = 0 WHERE id = ?', (tortoise_id,))
+        conn.commit()
+    
+    def activate_tortoise(self, tortoise_id: int):
+        """Activate a tortoise"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('UPDATE tortoises SET is_active = 1 WHERE id = ?', (tortoise_id,))
+        conn.commit()
+    
     def get_plants(self, safety_level: Optional[str] = None) -> List[Dict]:
         conn = self.get_connection()
         cursor = conn.cursor()
@@ -412,3 +473,156 @@ class DatabaseManager:
         else:
             cursor.execute('SELECT * FROM plants ORDER BY name')
         return [dict(row) for row in cursor.fetchall()]
+    
+    # Health Record Management Methods
+    def add_health_record(self, tortoise_id: int, user_id: int, record_type: str, title: str, 
+                         description: str = '', vet_name: str = '', diagnosis: str = '', 
+                         treatment: str = '', medication: str = '', follow_up_date: str = '',
+                         photo_path: str = '', priority: str = 'medium') -> int:
+        """Add a new health record"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO health_records (tortoise_id, user_id, record_type, title, description,
+                                      vet_name, diagnosis, treatment, medication, follow_up_date,
+                                      photo_path, priority) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (tortoise_id, user_id, record_type, title, description, vet_name, diagnosis,
+              treatment, medication, follow_up_date or None, photo_path, priority))
+        conn.commit()
+        return cursor.lastrowid
+    
+    def get_health_records(self, tortoise_id: Optional[int] = None, record_type: Optional[str] = None,
+                          resolved: Optional[bool] = None) -> List[Dict]:
+        """Get health records with optional filtering"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        query = '''
+            SELECT hr.*, t.name as tortoise_name, u.name as user_name
+            FROM health_records hr
+            JOIN tortoises t ON hr.tortoise_id = t.id
+            JOIN users u ON hr.user_id = u.id
+            WHERE 1=1
+        '''
+        params = []
+        
+        if tortoise_id:
+            query += ' AND hr.tortoise_id = ?'
+            params.append(tortoise_id)
+        if record_type:
+            query += ' AND hr.record_type = ?'
+            params.append(record_type)
+        if resolved is not None:
+            query += ' AND hr.resolved = ?'
+            params.append(resolved)
+            
+        query += ' ORDER BY hr.record_date DESC'
+        
+        cursor.execute(query, params)
+        return [dict(row) for row in cursor.fetchall()]
+    
+    def update_health_record(self, record_id: int, **kwargs) -> bool:
+        """Update health record fields"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        allowed_fields = ['title', 'description', 'vet_name', 'diagnosis', 'treatment', 
+                         'medication', 'follow_up_date', 'photo_path', 'priority', 'resolved']
+        
+        updates = []
+        params = []
+        
+        for field, value in kwargs.items():
+            if field in allowed_fields:
+                updates.append(f'{field} = ?')
+                params.append(value)
+        
+        if not updates:
+            return False
+            
+        params.append(record_id)
+        query = f'UPDATE health_records SET {", ".join(updates)} WHERE id = ?'
+        cursor.execute(query, params)
+        conn.commit()
+        return cursor.rowcount > 0
+    
+    def get_health_record_by_id(self, record_id: int) -> Optional[Dict]:
+        """Get a specific health record by ID"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT hr.*, t.name as tortoise_name, u.name as user_name
+            FROM health_records hr
+            JOIN tortoises t ON hr.tortoise_id = t.id
+            JOIN users u ON hr.user_id = u.id
+            WHERE hr.id = ?
+        ''', (record_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+    
+    def delete_health_record(self, record_id: int) -> bool:
+        """Delete a health record"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM health_records WHERE id = ?', (record_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+    
+    def get_health_summary(self, tortoise_id: int) -> Dict:
+        """Get health summary statistics for a tortoise"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        # Get total records count
+        cursor.execute('SELECT COUNT(*) as total FROM health_records WHERE tortoise_id = ?', (tortoise_id,))
+        total_records = cursor.fetchone()[0]
+        
+        # Get unresolved issues count
+        cursor.execute('SELECT COUNT(*) as unresolved FROM health_records WHERE tortoise_id = ? AND resolved = 0', (tortoise_id,))
+        unresolved_issues = cursor.fetchone()[0]
+        
+        # Get recent records (last 30 days)
+        cursor.execute('''
+            SELECT COUNT(*) as recent FROM health_records 
+            WHERE tortoise_id = ? AND record_date > datetime('now', '-30 days')
+        ''', (tortoise_id,))
+        recent_records = cursor.fetchone()[0]
+        
+        # Get urgent issues
+        cursor.execute('SELECT COUNT(*) as urgent FROM health_records WHERE tortoise_id = ? AND priority = "urgent" AND resolved = 0', (tortoise_id,))
+        urgent_issues = cursor.fetchone()[0]
+        
+        return {
+            'total_records': total_records,
+            'unresolved_issues': unresolved_issues,
+            'recent_records': recent_records,
+            'urgent_issues': urgent_issues
+        }
+    
+    # Settings Management Methods
+    def get_setting(self, key: str) -> Optional[str]:
+        """Get a setting value by key"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT value FROM settings WHERE key = ?', (key,))
+        row = cursor.fetchone()
+        return row[0] if row else None
+    
+    def set_setting(self, key: str, value: str, description: str = '') -> bool:
+        """Set a setting value"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT OR REPLACE INTO settings (key, value, description, updated_at) 
+            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+        ''', (key, value, description))
+        conn.commit()
+        return True
+    
+    def get_all_settings(self) -> Dict[str, str]:
+        """Get all settings as a dictionary"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('SELECT key, value FROM settings')
+        return {row[0]: row[1] for row in cursor.fetchall()}

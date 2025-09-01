@@ -188,7 +188,7 @@ class SettingsMainScreen(BaseScreen):
         
     def go_to_section(self, screen_name):
         """Navigate to a specific settings section"""
-        if screen_name in ['settings_users', 'settings_tortoises']:
+        if screen_name in ['settings_users', 'settings_tortoises', 'settings_connections']:
             # Navigate to functional settings screens
             self.main_window.show_screen(screen_name)
         else:

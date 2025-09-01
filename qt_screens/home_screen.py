@@ -22,6 +22,10 @@ class HomeScreen(BaseScreen):
         
     def build_ui(self):
         """Build home screen UI"""
+        # Make layout more compact for better space usage
+        self.main_layout.setSpacing(5)  # Reduce from default 10px to 5px
+        self.main_layout.setContentsMargins(15, 15, 15, 15)  # Reduce from 20px to 15px
+        
         # App title
         title = self.create_title_label('Tortoise Care Touch', 'large')
         self.main_layout.addWidget(title)
@@ -32,7 +36,7 @@ class HomeScreen(BaseScreen):
         time_font.setPointSize(14)
         self.time_label.setFont(time_font)
         self.time_label.setAlignment(Qt.AlignCenter)
-        self.time_label.setStyleSheet("margin: 10px; color: #424242;")
+        self.time_label.setStyleSheet("margin: 5px; color: #424242;")
         self.main_layout.addWidget(self.time_label)
         
         # Status area
@@ -40,6 +44,9 @@ class HomeScreen(BaseScreen):
         
         # Main navigation buttons
         self.create_navigation_buttons()
+        
+        # Add minimal spacing between main and bottom buttons
+        self.main_layout.addSpacing(10)
         
         # Bottom buttons
         self.create_bottom_buttons()
@@ -83,8 +90,8 @@ class HomeScreen(BaseScreen):
         
         # Navigation buttons with PNG icons and colors
         buttons = [
-            ('Feed Tortoise', 'apple', lambda: self.go_to_screen('feeding'), 'primary'),
-            ('Health Records', 'medical', lambda: self.go_to_screen('health'), 'danger'),
+            ('Feed Tortoise', 'apple', lambda: self.go_to_screen('select_tortoise_feeding'), 'primary'),
+            ('Health Records', 'medical', lambda: self.go_to_screen('select_tortoise_health'), 'danger'),
             ('Habitat Monitor', 'thermometer', lambda: self.go_to_screen('habitat'), 'secondary'),
             ('Growth Tracking', 'trending-up', lambda: self.go_to_screen('growth'), 'warning'),
             ('Care Reminders', 'bell', lambda: self.go_to_screen('reminders'), 'warning'),
@@ -192,6 +199,7 @@ class HomeScreen(BaseScreen):
     def create_bottom_buttons(self):
         """Create bottom navigation buttons"""
         bottom_layout = QHBoxLayout()
+        bottom_layout.setSpacing(15)  # Match main navigation button spacing
         
         # About button
         about_button = self.create_button('About', lambda: self.go_to_screen('about'))
@@ -224,7 +232,33 @@ class HomeScreen(BaseScreen):
             }
         """)
         settings_button.setMinimumWidth(200)
+        settings_button.setMinimumHeight(60)  # Match About button height for touch usability
         bottom_layout.addWidget(settings_button)
+        
+        # Quit button with icon
+        quit_button = create_icon_button('x', 'Quit', (20, 20), self.quit_application)
+        quit_button.setStyleSheet("""
+            QPushButton {
+                background-color: #f44336;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px;
+                font-weight: bold;
+                font-size: 14px;
+                text-align: left;
+                padding-left: 15px;
+            }
+            QPushButton:hover {
+                background-color: #d32f2f;
+            }
+            QPushButton:pressed {
+                background-color: #b71c1c;
+            }
+        """)
+        quit_button.setMinimumWidth(150)
+        quit_button.setMinimumHeight(60)  # Match About button height for touch usability
+        bottom_layout.addWidget(quit_button)
         
         self.main_layout.addLayout(bottom_layout)
         
@@ -246,3 +280,17 @@ class HomeScreen(BaseScreen):
     def on_enter(self):
         """Called when screen becomes active"""
         self.update_display()
+    
+    def quit_application(self):
+        """Quit the application with confirmation"""
+        from PySide6.QtWidgets import QMessageBox
+        
+        reply = QMessageBox.question(
+            self, 'Quit Application', 
+            'Are you sure you want to quit Tortoise Care Touch?',
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        
+        if reply == QMessageBox.Yes:
+            self.main_window.close()
