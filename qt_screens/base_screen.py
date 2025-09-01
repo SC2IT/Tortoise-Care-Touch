@@ -1,0 +1,192 @@
+"""
+Base screen class for PySide6 screens with common functionality
+"""
+
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont
+
+class BaseScreen(QWidget):
+    """Base class for all application screens with common UI elements"""
+    
+    def __init__(self, db_manager, main_window):
+        super().__init__()
+        self.db_manager = db_manager
+        self.main_window = main_window
+        
+        # Initialize UI
+        self.init_base_ui()
+        self.build_ui()
+        
+    def init_base_ui(self):
+        """Initialize common UI elements"""
+        # Main layout
+        self.main_layout = QVBoxLayout()
+        self.main_layout.setSpacing(10)
+        self.main_layout.setContentsMargins(20, 20, 20, 20)
+        self.setLayout(self.main_layout)
+        
+    def build_ui(self):
+        """Override this method to build screen-specific UI"""
+        pass
+        
+    def create_button(self, text, callback, style_class='default'):
+        """Create a styled button with consistent appearance"""
+        button = QPushButton(text)
+        
+        # Set button font size
+        font = button.font()
+        font.setPointSize(14)
+        button.setFont(font)
+        
+        # Set minimum height for touch interface
+        button.setMinimumHeight(60)
+        
+        # Apply styling based on class
+        if style_class == 'primary':
+            button.setStyleSheet("""
+                QPushButton {
+                    background-color: #4CAF50;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 10px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #45a049;
+                }
+                QPushButton:pressed {
+                    background-color: #3d8b40;
+                }
+            """)
+        elif style_class == 'secondary':
+            button.setStyleSheet("""
+                QPushButton {
+                    background-color: #2196F3;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 10px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #1976D2;
+                }
+                QPushButton:pressed {
+                    background-color: #1565C0;
+                }
+            """)
+        elif style_class == 'warning':
+            button.setStyleSheet("""
+                QPushButton {
+                    background-color: #FF9800;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 10px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #F57C00;
+                }
+                QPushButton:pressed {
+                    background-color: #E65100;
+                }
+            """)
+        elif style_class == 'danger':
+            button.setStyleSheet("""
+                QPushButton {
+                    background-color: #f44336;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 10px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #d32f2f;
+                }
+                QPushButton:pressed {
+                    background-color: #b71c1c;
+                }
+            """)
+        else:  # default
+            button.setStyleSheet("""
+                QPushButton {
+                    background-color: #757575;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 10px;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #616161;
+                }
+                QPushButton:pressed {
+                    background-color: #424242;
+                }
+            """)
+        
+        # Connect callback
+        button.clicked.connect(callback)
+        
+        return button
+        
+    def create_header(self, title, show_back_button=True):
+        """Create a standard header with title and optional back button"""
+        header_layout = QHBoxLayout()
+        
+        if show_back_button:
+            back_button = self.create_button("← Back", self.go_back)
+            back_button.setMaximumWidth(120)
+            header_layout.addWidget(back_button)
+            
+        # Title label
+        title_label = QLabel(title)
+        title_font = title_label.font()
+        title_font.setPointSize(18)
+        title_font.setBold(True)
+        title_label.setFont(title_font)
+        title_label.setAlignment(Qt.AlignCenter)
+        title_label.setStyleSheet("color: #2E7D32; margin: 10px;")
+        
+        if show_back_button:
+            header_layout.addWidget(title_label, 1)
+            header_layout.addWidget(QLabel(""), 0)  # Spacer for balance
+        else:
+            header_layout.addWidget(title_label, 1, Qt.AlignCenter)
+            
+        return header_layout
+        
+    def create_title_label(self, text, size='large'):
+        """Create a styled title label"""
+        label = QLabel(text)
+        font = label.font()
+        
+        if size == 'large':
+            font.setPointSize(20)
+        elif size == 'medium':
+            font.setPointSize(16)
+        else:  # small
+            font.setPointSize(12)
+            
+        font.setBold(True)
+        label.setFont(font)
+        label.setAlignment(Qt.AlignCenter)
+        label.setStyleSheet("color: #2E7D32; margin: 10px;")
+        
+        return label
+        
+    def go_back(self):
+        """Navigate back to home screen"""
+        self.main_window.show_screen('home')
+        
+    def go_to_screen(self, screen_name):
+        """Navigate to a specific screen"""
+        self.main_window.show_screen(screen_name)
+        
+    def on_enter(self):
+        """Called when screen becomes active - override in subclasses"""
+        pass
