@@ -66,8 +66,14 @@ class SettingsMainScreen(BaseScreen):
                 category['icon'],
                 category['title'], 
                 (32, 32),
-                lambda screen=category['screen']: self.go_to_section(screen)
+                None  # We'll connect the signal manually
             )
+            
+            # Connect button manually to avoid lambda closure issues
+            def create_handler(screen_name):
+                return lambda: self.go_to_section(screen_name)
+            
+            button.clicked.connect(create_handler(category['screen']))
             button.setMinimumHeight(80)
             
             # Apply category-specific styling
@@ -182,10 +188,11 @@ class SettingsMainScreen(BaseScreen):
         
     def go_to_section(self, screen_name):
         """Navigate to a specific settings section"""
-        if screen_name == 'settings_users':
-            # Navigate to user management screen (when implemented)
-            self.show_coming_soon('User Management')
+        if screen_name in ['settings_users', 'settings_tortoises']:
+            # Navigate to functional settings screens
+            self.main_window.show_screen(screen_name)
         else:
+            # Show coming soon for other sections
             section_name = screen_name.replace('settings_', '').replace('_', ' ').title()
             self.show_coming_soon(section_name)
             

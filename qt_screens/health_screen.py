@@ -253,7 +253,7 @@ class HealthScreen(BaseScreen):
         text_edit.setPlainText(content)
         text_edit.setReadOnly(True)
         text_edit.setMinimumSize(600, 400)
-        text_edit.setStyleSheet("font-size: 12px; line-height: 1.4;")
+        text_edit.setStyleSheet("font-size: 16px; line-height: 1.5; padding: 10px;")
         
         # Replace the default text with our custom widget
         dialog.layout().addWidget(text_edit, 1, 1)

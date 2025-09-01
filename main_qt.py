@@ -15,6 +15,9 @@ from PySide6.QtGui import QFont
 from qt_screens.home_screen import HomeScreen
 from qt_screens.settings_main_screen import SettingsMainScreen
 from qt_screens.health_screen import HealthScreen
+from qt_screens.placeholder_screen import PlaceholderScreen
+from qt_screens.settings_users_screen import SettingsUsersScreen
+from qt_screens.settings_tortoises_screen import SettingsTortoisesScreen
 
 # Import database
 from database.db_manager import DatabaseManager
@@ -27,6 +30,13 @@ class TortoiseCareApp(QMainWindow):
         
         # Initialize database
         self.db_manager = DatabaseManager()
+        
+        # Ensure database is initialized
+        try:
+            self.db_manager.initialize_database()
+            print("Database initialized successfully")
+        except Exception as e:
+            print(f"Database initialization error: {e}")
         
         # Initialize UI
         self.init_ui()
@@ -65,6 +75,112 @@ class TortoiseCareApp(QMainWindow):
         # Health screen
         self.screens['health'] = HealthScreen(self.db_manager, self)
         self.stacked_widget.addWidget(self.screens['health'])
+        
+        # Settings sub-screens (functional)
+        self.screens['settings_users'] = SettingsUsersScreen(self.db_manager, self)
+        self.stacked_widget.addWidget(self.screens['settings_users'])
+        
+        self.screens['settings_tortoises'] = SettingsTortoisesScreen(self.db_manager, self)
+        self.stacked_widget.addWidget(self.screens['settings_tortoises'])
+        
+        # Placeholder screens for unimplemented features
+        
+        # Feeding screen
+        self.screens['feeding'] = PlaceholderScreen(
+            self.db_manager, self,
+            'Feed Tortoise',
+            'Complete feeding tracking system with plant safety integration.',
+            [
+                'Weight-based feeding sessions',
+                'Plant safety indicators (green/yellow/red)',
+                'Supplement tracking (calcium, vitamins)',
+                'Multi-user feeding logs',
+                'Behavior notes and observations',
+                'Integration with plant database'
+            ]
+        )
+        self.stacked_widget.addWidget(self.screens['feeding'])
+        
+        # Habitat monitoring screen
+        self.screens['habitat'] = PlaceholderScreen(
+            self.db_manager, self,
+            'Habitat Monitor',
+            'Real-time temperature and humidity monitoring via Adafruit.IO.',
+            [
+                'Live temperature and humidity readings',
+                'Adafruit.IO sensor integration',
+                'Alert system for out-of-range conditions',
+                'Historical data logging and charts',
+                'Multiple sensor support',
+                'Automated data collection'
+            ]
+        )
+        self.stacked_widget.addWidget(self.screens['habitat'])
+        
+        # Growth tracking screen
+        self.screens['growth'] = PlaceholderScreen(
+            self.db_manager, self,
+            'Growth Tracking',
+            'Photo documentation and measurement tracking system.',
+            [
+                'Photo import from mobile devices',
+                'Weight and size measurements',
+                'Growth charts and visualizations',
+                'Progress comparison over time',
+                'Photo gallery with timestamps',
+                'Measurement history tracking'
+            ]
+        )
+        self.stacked_widget.addWidget(self.screens['growth'])
+        
+        # Care reminders screen
+        self.screens['reminders'] = PlaceholderScreen(
+            self.db_manager, self,
+            'Care Reminders',
+            'Task scheduling and notification system for daily tortoise care.',
+            [
+                'Daily, weekly, monthly care routines',
+                'Task completion tracking',
+                'Multi-user task assignments',
+                'Notification system',
+                'Care schedule customization',
+                'Task history and compliance'
+            ]
+        )
+        self.stacked_widget.addWidget(self.screens['reminders'])
+        
+        # Plant database screen
+        self.screens['plants'] = PlaceholderScreen(
+            self.db_manager, self,
+            'Plant Database',
+            'Comprehensive plant safety database with 60+ plants for tortoise feeding.',
+            [
+                'Complete plant safety classifications',
+                'Plant photos (leaves, flowers, full plant)',
+                'Visual plant identification guide',
+                'Scientific names and nutrition info',
+                'Feeding frequency recommendations',
+                'Toxic plant warnings and alternatives',
+                'Search and filter functionality'
+            ]
+        )
+        self.stacked_widget.addWidget(self.screens['plants'])
+        
+        # About screen
+        self.screens['about'] = PlaceholderScreen(
+            self.db_manager, self,
+            'About',
+            'Application information, credits, and technical details.',
+            [
+                'Version and build information',
+                'Source citations and acknowledgments',
+                'Technical framework details',
+                'Privacy policy and data handling',
+                'License information',
+                'Contribution guidelines'
+            ]
+        )
+        self.stacked_widget.addWidget(self.screens['about'])
         
         # Set home as default screen
         self.show_screen('home')

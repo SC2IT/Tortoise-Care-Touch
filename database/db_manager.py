@@ -29,10 +29,17 @@ class DatabaseManager:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL UNIQUE,
                 email TEXT,
+                role TEXT DEFAULT 'Caregiver',
                 is_active BOOLEAN DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+        
+        # Add role column if it doesn't exist (for existing databases)
+        try:
+            cursor.execute('ALTER TABLE users ADD COLUMN role TEXT DEFAULT "Caregiver"')
+        except sqlite3.OperationalError:
+            pass  # Column already exists
         
         # Tortoises table
         cursor.execute('''
@@ -320,18 +327,64 @@ class DatabaseManager:
         ''', (key, value))
         conn.commit()
     
-    def add_user(self, name: str, email: str = '') -> int:
+    def add_user(self, name: str, email: str = '', role: str = 'Caregiver') -> int:
         conn = self.get_connection()
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO users (name, email) VALUES (?, ?)', (name, email))
+        cursor.execute('INSERT INTO users (name, email, role) VALUES (?, ?, ?)', (name, email, role))
         conn.commit()
         return cursor.lastrowid
     
-    def get_users(self) -> List[Dict]:
+    def get_users(self, include_inactive: bool = False) -> List[Dict]:
         conn = self.get_connection()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM users WHERE is_active = 1 ORDER BY name')
+        if include_inactive:
+            cursor.execute('SELECT * FROM users ORDER BY is_active DESC, name')
+        else:
+            cursor.execute('SELECT * FROM users WHERE is_active = 1 ORDER BY name')
         return [dict(row) for row in cursor.fetchall()]
+    
+    def update_user(self, user_id: int, name: str = None, email: str = None, role: str = None) -> bool:
+        """Update user information"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        updates = []
+        params = []
+        
+        if name is not None:
+            updates.append('name = ?')
+            params.append(name)
+        if email is not None:
+            updates.append('email = ?')
+            params.append(email)
+        if role is not None:
+            updates.append('role = ?')
+            params.append(role)
+        
+        if not updates:
+            return False
+            
+        params.append(user_id)
+        query = f'UPDATE users SET {", ".join(updates)} WHERE id = ?'
+        cursor.execute(query, params)
+        conn.commit()
+        return cursor.rowcount > 0
+    
+    def deactivate_user(self, user_id: int) -> bool:
+        """Deactivate a user (soft delete)"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('UPDATE users SET is_active = 0 WHERE id = ?', (user_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+    
+    def activate_user(self, user_id: int) -> bool:
+        """Reactivate a deactivated user"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute('UPDATE users SET is_active = 1 WHERE id = ?', (user_id,))
+        conn.commit()
+        return cursor.rowcount > 0
     
     def add_tortoise(self, name: str, species: str = "Hermann's Tortoise", **kwargs) -> int:
         conn = self.get_connection()
