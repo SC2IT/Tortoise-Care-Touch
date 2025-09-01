@@ -6,9 +6,9 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
 [![PySide6](https://img.shields.io/badge/UI-PySide6-brightgreen.svg)](https://doc.qt.io/qtforpython/)
 
-> **🚀 Version 0.3.0**: Complete PySide6/Qt conversion for reliable Pi OS compatibility! No more UI rendering issues or broken icons.
+> **🚀 Version 0.3.0-alpha**: PySide6/Qt conversion for reliable Pi OS compatibility! Still in alpha development with core features working.
 
-## ✨ Current Features (Production Ready)
+## ✨ Alpha Features (Working Now)
 
 ### 🖥️ **Reliable Qt Interface** ✅ NEW!
 - **PySide6/Qt native widgets** - No more broken layouts or missing text
