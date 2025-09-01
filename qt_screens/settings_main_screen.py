@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, QPushButton,
                               QLabel, QMessageBox)
 from PySide6.QtCore import Qt
 from .base_screen import BaseScreen
+from .icon_manager import create_icon_button
 
 class SettingsMainScreen(BaseScreen):
     """Main settings screen with large category buttons"""
@@ -26,25 +27,29 @@ class SettingsMainScreen(BaseScreen):
         """Create settings category buttons"""
         categories = [
             {
-                'title': '👥 User Management',
+                'title': 'User Management',
+                'icon': 'users',
                 'subtitle': 'Add users, assign tasks, manage profiles',
                 'screen': 'settings_users',
                 'style': 'primary'
             },
             {
-                'title': '🐢 Tortoise Management',
+                'title': 'Tortoise Management',
+                'icon': 'tortoise',
                 'subtitle': 'Add tortoises, edit profiles, view info',
                 'screen': 'settings_tortoises',
                 'style': 'warning'
             },
             {
-                'title': '📶 Connections',
+                'title': 'Connections',
+                'icon': 'wifi',
                 'subtitle': 'Adafruit.IO, sensors, network settings',
                 'screen': 'settings_connections',
                 'style': 'secondary'
             },
             {
-                'title': '💾 Database',
+                'title': 'Database',
+                'icon': 'database',
                 'subtitle': 'Backup, restore, import/export data',
                 'screen': 'settings_database',
                 'style': 'default'
@@ -56,18 +61,80 @@ class SettingsMainScreen(BaseScreen):
             category_layout = QVBoxLayout()
             category_layout.setSpacing(5)
             
-            # Main category button
-            button = self.create_button(
-                category['title'],
-                lambda screen=category['screen']: self.go_to_section(screen),
-                category['style']
+            # Main category button with PNG icon
+            button = create_icon_button(
+                category['icon'],
+                category['title'], 
+                (32, 32),
+                lambda screen=category['screen']: self.go_to_section(screen)
             )
             button.setMinimumHeight(80)
             
-            # Make button text larger
-            font = button.font()
-            font.setPointSize(16)
-            button.setFont(font)
+            # Apply category-specific styling
+            if category['style'] == 'primary':
+                button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #4CAF50;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 10px;
+                        font-weight: bold;
+                        font-size: 16px;
+                        text-align: left;
+                        padding-left: 20px;
+                    }
+                    QPushButton:hover { background-color: #45a049; }
+                    QPushButton:pressed { background-color: #3d8b40; }
+                """)
+            elif category['style'] == 'warning':
+                button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #FF9800;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 10px;
+                        font-weight: bold;
+                        font-size: 16px;
+                        text-align: left;
+                        padding-left: 20px;
+                    }
+                    QPushButton:hover { background-color: #F57C00; }
+                    QPushButton:pressed { background-color: #E65100; }
+                """)
+            elif category['style'] == 'secondary':
+                button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #2196F3;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 10px;
+                        font-weight: bold;
+                        font-size: 16px;
+                        text-align: left;
+                        padding-left: 20px;
+                    }
+                    QPushButton:hover { background-color: #1976D2; }
+                    QPushButton:pressed { background-color: #1565C0; }
+                """)
+            else:  # default
+                button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #757575;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 10px;
+                        font-weight: bold;
+                        font-size: 16px;
+                        text-align: left;
+                        padding-left: 20px;
+                    }
+                    QPushButton:hover { background-color: #616161; }
+                    QPushButton:pressed { background-color: #424242; }
+                """)
             
             category_layout.addWidget(button)
             

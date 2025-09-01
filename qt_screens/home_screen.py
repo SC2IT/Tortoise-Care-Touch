@@ -7,6 +7,7 @@ from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, QGridLayout,
                               QPushButton, QLabel)
 from PySide6.QtCore import Qt, QTimer
 from .base_screen import BaseScreen
+from .icon_manager import create_icon_button, set_button_icon
 
 class HomeScreen(BaseScreen):
     """Main home screen with navigation buttons and status display"""
@@ -80,27 +81,105 @@ class HomeScreen(BaseScreen):
         nav_layout = QGridLayout()
         nav_layout.setSpacing(15)
         
-        # Navigation buttons with icons and colors
+        # Navigation buttons with PNG icons and colors
         buttons = [
-            ('🍎 Feed Tortoise', lambda: self.go_to_screen('feeding'), 'primary'),
-            ('🩺 Health Records', lambda: self.go_to_screen('health'), 'danger'),
-            ('🌡️ Habitat Monitor', lambda: self.go_to_screen('habitat'), 'secondary'),
-            ('📈 Growth Tracking', lambda: self.go_to_screen('growth'), 'warning'),
-            ('🔔 Care Reminders', lambda: self.go_to_screen('reminders'), 'warning'),
-            ('🌱 Plant Database', lambda: self.go_to_screen('plants'), 'primary'),
+            ('Feed Tortoise', 'apple', lambda: self.go_to_screen('feeding'), 'primary'),
+            ('Health Records', 'medical', lambda: self.go_to_screen('health'), 'danger'),
+            ('Habitat Monitor', 'thermometer', lambda: self.go_to_screen('habitat'), 'secondary'),
+            ('Growth Tracking', 'trending-up', lambda: self.go_to_screen('growth'), 'warning'),
+            ('Care Reminders', 'bell', lambda: self.go_to_screen('reminders'), 'warning'),
+            ('Plant Database', 'plant', lambda: self.go_to_screen('plants'), 'primary'),
         ]
         
         # Arrange in 2x3 grid
         row, col = 0, 0
-        for text, callback, style in buttons:
-            button = self.create_button(text, callback, style)
+        for text, icon_name, callback, style in buttons:
+            # Create button with PNG icon
+            button = create_icon_button(icon_name, text, (32, 32), callback)
+            
+            # Apply styling based on class
+            if style == 'primary':
+                button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #4CAF50;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 10px;
+                        font-weight: bold;
+                        font-size: 16px;
+                        text-align: left;
+                        padding-left: 20px;
+                    }
+                    QPushButton:hover {
+                        background-color: #45a049;
+                    }
+                    QPushButton:pressed {
+                        background-color: #3d8b40;
+                    }
+                """)
+            elif style == 'danger':
+                button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #f44336;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 10px;
+                        font-weight: bold;
+                        font-size: 16px;
+                        text-align: left;
+                        padding-left: 20px;
+                    }
+                    QPushButton:hover {
+                        background-color: #d32f2f;
+                    }
+                    QPushButton:pressed {
+                        background-color: #b71c1c;
+                    }
+                """)
+            elif style == 'secondary':
+                button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #2196F3;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 10px;
+                        font-weight: bold;
+                        font-size: 16px;
+                        text-align: left;
+                        padding-left: 20px;
+                    }
+                    QPushButton:hover {
+                        background-color: #1976D2;
+                    }
+                    QPushButton:pressed {
+                        background-color: #1565C0;
+                    }
+                """)
+            elif style == 'warning':
+                button.setStyleSheet("""
+                    QPushButton {
+                        background-color: #FF9800;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 10px;
+                        font-weight: bold;
+                        font-size: 16px;
+                        text-align: left;
+                        padding-left: 20px;
+                    }
+                    QPushButton:hover {
+                        background-color: #F57C00;
+                    }
+                    QPushButton:pressed {
+                        background-color: #E65100;
+                    }
+                """)
+            
             button.setMinimumHeight(80)
-            
-            # Make button text larger
-            font = button.font()
-            font.setPointSize(16)
-            button.setFont(font)
-            
             nav_layout.addWidget(button, row, col)
             
             col += 1
@@ -122,10 +201,28 @@ class HomeScreen(BaseScreen):
         # Spacer
         bottom_layout.addStretch()
         
-        # Settings button
-        settings_button = self.create_button('⚙️ Settings', 
-                                           lambda: self.go_to_screen('settings_main'), 
-                                           'default')
+        # Settings button with PNG icon
+        settings_button = create_icon_button('settings', 'Settings', (24, 24), 
+                                           lambda: self.go_to_screen('settings_main'))
+        settings_button.setStyleSheet("""
+            QPushButton {
+                background-color: #757575;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px;
+                font-weight: bold;
+                font-size: 14px;
+                text-align: left;
+                padding-left: 15px;
+            }
+            QPushButton:hover {
+                background-color: #616161;
+            }
+            QPushButton:pressed {
+                background-color: #424242;
+            }
+        """)
         settings_button.setMinimumWidth(200)
         bottom_layout.addWidget(settings_button)
         

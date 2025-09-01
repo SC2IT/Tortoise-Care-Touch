@@ -6,6 +6,7 @@ from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, QGridLayout,
                               QPushButton, QLabel, QMessageBox, QScrollArea, QTextEdit)
 from PySide6.QtCore import Qt
 from .base_screen import BaseScreen
+from .icon_manager import create_icon_button
 
 class HealthScreen(BaseScreen):
     """Comprehensive health monitoring and care guide system"""
@@ -29,18 +30,46 @@ class HealthScreen(BaseScreen):
         """Create emergency alert section"""
         emergency_layout = QHBoxLayout()
         
-        # Emergency protocols button
-        emergency_btn = self.create_button('⚠️ EMERGENCY PROTOCOLS', 
-                                         self.show_emergency_protocols, 
-                                         'danger')
+        # Emergency protocols button with icon
+        emergency_btn = create_icon_button('emergency', 'EMERGENCY PROTOCOLS', (28, 28), 
+                                         self.show_emergency_protocols)
         emergency_btn.setMinimumHeight(60)
+        emergency_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #f44336;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px;
+                font-weight: bold;
+                font-size: 14px;
+                text-align: left;
+                padding-left: 15px;
+            }
+            QPushButton:hover { background-color: #d32f2f; }
+            QPushButton:pressed { background-color: #b71c1c; }
+        """)
         
-        # Vet contact button  
-        vet_btn = self.create_button('📞 CALL VET', 
-                                   self.show_emergency_contacts, 
-                                   'default')
+        # Vet contact button with icon
+        vet_btn = create_icon_button('phone', 'CALL VET', (24, 24), 
+                                   self.show_emergency_contacts)
         vet_btn.setMinimumHeight(60)
         vet_btn.setMaximumWidth(200)
+        vet_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #757575;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px;
+                font-weight: bold;
+                font-size: 14px;
+                text-align: left;
+                padding-left: 15px;
+            }
+            QPushButton:hover { background-color: #616161; }
+            QPushButton:pressed { background-color: #424242; }
+        """)
         
         emergency_layout.addWidget(emergency_btn, 2)
         emergency_layout.addWidget(vet_btn, 1)
