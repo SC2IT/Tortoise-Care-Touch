@@ -34,10 +34,11 @@ class QtIconManager:
                 pixmap = QPixmap(str(icon_path))
                 if not pixmap.isNull():
                     # Scale pixmap to desired size
+                    from PySide6.QtCore import Qt
                     scaled_pixmap = pixmap.scaled(
                         QSize(size[0], size[1]), 
-                        aspectRatioMode=1,  # KeepAspectRatio
-                        transformMode=1     # SmoothTransformation
+                        Qt.KeepAspectRatio,
+                        Qt.SmoothTransformation
                     )
                     icon = QIcon(scaled_pixmap)
                     self.icon_cache[cache_key] = icon

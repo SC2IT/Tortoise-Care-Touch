@@ -139,8 +139,28 @@ class BaseScreen(QWidget):
         header_layout = QHBoxLayout()
         
         if show_back_button:
-            back_button = self.create_button("← Back", self.go_back)
+            # Import here to avoid circular import
+            from .icon_manager import create_icon_button
+            back_button = create_icon_button("back", "Back", (24, 24), self.go_back)
             back_button.setMaximumWidth(120)
+            back_button.setStyleSheet("""
+                QPushButton {
+                    background-color: #757575;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 10px;
+                    font-weight: bold;
+                    text-align: left;
+                    padding-left: 15px;
+                }
+                QPushButton:hover {
+                    background-color: #616161;
+                }
+                QPushButton:pressed {
+                    background-color: #424242;
+                }
+            """)
             header_layout.addWidget(back_button)
             
         # Title label
