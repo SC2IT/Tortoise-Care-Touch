@@ -2,12 +2,13 @@
 Home screen with main navigation and status display
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, QGridLayout, 
                               QPushButton, QLabel)
 from PySide6.QtCore import Qt, QTimer
 from .base_screen import BaseScreen
 from .icon_manager import create_icon_button, set_button_icon
+from utils.adafruit_io_utils import create_adafruit_connector, get_sensor_thresholds
 
 class HomeScreen(BaseScreen):
     """Main home screen with navigation buttons and status display"""
@@ -268,14 +269,206 @@ class HomeScreen(BaseScreen):
         current_time = datetime.now().strftime('%A, %B %d, %Y - %I:%M %p')
         self.time_label.setText(current_time)
         
-        # Update habitat readings (placeholder for now)
-        # TODO: Integrate with Adafruit.IO
-        self.temp_label.setText('Temperature: --°C')
-        self.humidity_label.setText('Humidity: --%')
+        # Update habitat readings from Adafruit.IO
+        self.update_sensor_data()
         
         # Update last feeding info
-        # TODO: Get from database
-        self.last_feeding_label.setText('Last Feeding: --')
+        self.update_feeding_info()
+    
+    def update_sensor_data(self):
+        """Update sensor data from Adafruit.IO with stale data warnings"""
+        try:
+            # Create Adafruit.IO connector
+            connector = create_adafruit_connector(self.db_manager)
+            
+            if not connector:
+                # No configuration - show not configured message
+                self.temp_label.setText('Temperature: Not Configured')
+                self.temp_label.setStyleSheet(self.get_status_style('#9E9E9E'))
+                
+                self.humidity_label.setText('Humidity: Not Configured')
+                self.humidity_label.setStyleSheet(self.get_status_style('#9E9E9E'))
+                return
+            
+            # Get feed names from settings
+            temp_feed = self.db_manager.get_setting('temp_feed_name') or 'temperature'
+            humidity_feed = self.db_manager.get_setting('humidity_feed_name') or 'humidity'
+            
+            # Get sensor thresholds
+            thresholds = get_sensor_thresholds(self.db_manager)
+            
+            # Get temperature data
+            temp_success, temp_value, temp_msg = connector.get_feed_value(temp_feed)
+            if temp_success and temp_value is not None:
+                # Check if data is stale (older than 10 minutes)
+                is_stale, age_info = self.check_data_staleness(temp_msg)
+                temp_status = self.get_threshold_status(temp_value, thresholds['temperature'])
+                
+                if is_stale:
+                    self.temp_label.setText(f'Temperature: {temp_value:.1f}°C ⚠️ STALE')
+                    self.temp_label.setStyleSheet(self.get_status_style('#FF9800', warning=True))  # Orange for stale
+                else:
+                    self.temp_label.setText(f'Temperature: {temp_value:.1f}°C')
+                    self.temp_label.setStyleSheet(self.get_status_style(temp_status['color']))
+            else:
+                self.temp_label.setText(f'Temperature: Error')
+                self.temp_label.setStyleSheet(self.get_status_style('#f44336'))  # Red for error
+            
+            # Get humidity data
+            humidity_success, humidity_value, humidity_msg = connector.get_feed_value(humidity_feed)
+            if humidity_success and humidity_value is not None:
+                # Check if data is stale
+                is_stale, age_info = self.check_data_staleness(humidity_msg)
+                humidity_status = self.get_threshold_status(humidity_value, thresholds['humidity'])
+                
+                if is_stale:
+                    self.humidity_label.setText(f'Humidity: {humidity_value:.1f}% ⚠️ STALE')
+                    self.humidity_label.setStyleSheet(self.get_status_style('#FF9800', warning=True))  # Orange for stale
+                else:
+                    self.humidity_label.setText(f'Humidity: {humidity_value:.1f}%')
+                    self.humidity_label.setStyleSheet(self.get_status_style(humidity_status['color']))
+            else:
+                self.humidity_label.setText(f'Humidity: Error')
+                self.humidity_label.setStyleSheet(self.get_status_style('#f44336'))  # Red for error
+                
+        except Exception as e:
+            # Handle any errors gracefully
+            self.temp_label.setText('Temperature: Connection Error')
+            self.temp_label.setStyleSheet(self.get_status_style('#f44336'))
+            
+            self.humidity_label.setText('Humidity: Connection Error')
+            self.humidity_label.setStyleSheet(self.get_status_style('#f44336'))
+    
+    def check_data_staleness(self, timestamp_msg):
+        """Check if data is stale based on timestamp"""
+        try:
+            # Extract timestamp from message like "Retrieved at 2024-09-02T10:30:00Z"
+            if 'Retrieved at' in timestamp_msg:
+                timestamp_str = timestamp_msg.split('Retrieved at ')[1]
+                # Handle different timestamp formats
+                if timestamp_str.endswith('Z'):
+                    data_time = datetime.fromisoformat(timestamp_str[:-1])
+                else:
+                    data_time = datetime.fromisoformat(timestamp_str)
+                
+                # Calculate age
+                now = datetime.now()
+                age = now - data_time
+                
+                # Consider data stale if older than 10 minutes
+                is_stale = age > timedelta(minutes=10)
+                
+                # Format age info
+                if age.total_seconds() < 60:
+                    age_info = f"{int(age.total_seconds())}s ago"
+                elif age.total_seconds() < 3600:
+                    age_info = f"{int(age.total_seconds()/60)}m ago"
+                else:
+                    age_info = f"{int(age.total_seconds()/3600)}h ago"
+                
+                return is_stale, age_info
+        except Exception:
+            pass
+        
+        # Default to stale if we can't parse timestamp
+        return True, "unknown age"
+    
+    def get_threshold_status(self, value, thresholds):
+        """Get status based on threshold comparison"""
+        if value < thresholds['min']:
+            return {'status': 'low', 'color': '#2196F3'}  # Blue for low
+        elif value > thresholds['max']:
+            return {'status': 'high', 'color': '#f44336'}  # Red for high
+        else:
+            return {'status': 'optimal', 'color': '#4CAF50'}  # Green for optimal
+    
+    def get_status_style(self, color, warning=False):
+        """Get CSS style for status labels"""
+        if warning:
+            return f"""
+                QLabel {{
+                    background-color: #FFF3E0;
+                    border: 2px solid {color};
+                    border-radius: 5px;
+                    padding: 8px;
+                    margin: 5px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    color: #E65100;
+                }}
+            """
+        else:
+            # Determine background based on color
+            if color == '#4CAF50':  # Green - optimal
+                bg_color = '#E8F5E8'
+            elif color == '#2196F3':  # Blue - low
+                bg_color = '#E3F2FD'
+            elif color == '#f44336':  # Red - high/error
+                bg_color = '#FFEBEE'
+            else:  # Gray - not configured
+                bg_color = '#F5F5F5'
+            
+            return f"""
+                QLabel {{
+                    background-color: {bg_color};
+                    border: 1px solid {color};
+                    border-radius: 5px;
+                    padding: 8px;
+                    margin: 5px;
+                    font-size: 12px;
+                    color: {color};
+                    font-weight: bold;
+                }}
+            """
+    
+    def update_feeding_info(self):
+        """Update last feeding information from database"""
+        try:
+            # Get recent feeding records
+            conn = self.db_manager.get_connection()
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                SELECT f.feeding_date, f.notes, t.name as tortoise_name
+                FROM feeding_records f
+                JOIN tortoises t ON f.tortoise_id = t.id
+                ORDER BY f.feeding_date DESC
+                LIMIT 1
+            """)
+            
+            result = cursor.fetchone()
+            
+            if result:
+                feeding_date, notes, tortoise_name = result
+                # Parse the feeding date
+                feed_time = datetime.fromisoformat(feeding_date)
+                now = datetime.now()
+                time_diff = now - feed_time
+                
+                # Format time difference
+                if time_diff.days > 0:
+                    time_str = f"{time_diff.days}d ago"
+                elif time_diff.seconds > 3600:
+                    time_str = f"{int(time_diff.seconds/3600)}h ago"
+                else:
+                    time_str = f"{int(time_diff.seconds/60)}m ago"
+                
+                self.last_feeding_label.setText(f'Last Feeding: {tortoise_name} ({time_str})')
+                
+                # Color based on time since last feeding
+                if time_diff.days > 1:
+                    self.last_feeding_label.setStyleSheet(self.get_status_style('#f44336'))  # Red if >1 day
+                elif time_diff.days > 0:
+                    self.last_feeding_label.setStyleSheet(self.get_status_style('#FF9800'))  # Orange if >12 hours
+                else:
+                    self.last_feeding_label.setStyleSheet(self.get_status_style('#4CAF50'))  # Green if recent
+            else:
+                self.last_feeding_label.setText('Last Feeding: No records')
+                self.last_feeding_label.setStyleSheet(self.get_status_style('#9E9E9E'))
+                
+        except Exception as e:
+            self.last_feeding_label.setText('Last Feeding: Database Error')
+            self.last_feeding_label.setStyleSheet(self.get_status_style('#f44336'))
         
     def on_enter(self):
         """Called when screen becomes active"""

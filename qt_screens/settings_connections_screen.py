@@ -5,7 +5,7 @@ Connections Settings Screen - Configure Adafruit.IO, sensors, and network settin
 from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, QGridLayout, QPushButton, 
                               QLabel, QLineEdit, QScrollArea, QWidget, QMessageBox,
                               QDialog, QFormLayout, QDialogButtonBox, QComboBox, 
-                              QSpinBox, QTextEdit, QGroupBox, QCheckBox)
+                              QSpinBox, QTextEdit, QGroupBox, QCheckBox, QSizePolicy)
 from PySide6.QtCore import Qt
 from .base_screen import BaseScreen
 from .icon_manager import create_icon_button
@@ -270,28 +270,63 @@ class SettingsConnectionsScreen(BaseScreen):
         # Add some spacing after header
         self.main_layout.addSpacing(10)
         
-        # Create connection sections
-        self.create_adafruit_section()
-        self.create_sensor_section()
-        self.create_network_section()
+        # Create scrollable content area
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        scroll_area.setStyleSheet("""
+            QScrollArea {
+                border: none;
+                background-color: transparent;
+            }
+            QScrollBar:vertical {
+                background-color: #f0f0f0;
+                width: 12px;
+                border-radius: 6px;
+            }
+            QScrollBar::handle:vertical {
+                background-color: #c0c0c0;
+                border-radius: 6px;
+                min-height: 20px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background-color: #a0a0a0;
+            }
+        """)
         
-        # Add stretch to push everything up
-        self.main_layout.addStretch()
+        # Content widget for scroll area
+        scroll_content = QWidget()
+        scroll_layout = QVBoxLayout(scroll_content)
+        scroll_layout.setContentsMargins(10, 10, 10, 10)
+        scroll_layout.setSpacing(15)
         
-    def create_adafruit_section(self):
+        # Add all sections to scroll content
+        self.create_adafruit_section(scroll_layout)
+        self.create_sensor_section(scroll_layout)
+        self.create_network_section(scroll_layout)
+        
+        # Add stretch to push everything up in scroll area
+        scroll_layout.addStretch()
+        
+        # Set scroll content and add to main layout
+        scroll_area.setWidget(scroll_content)
+        self.main_layout.addWidget(scroll_area)
+        
+    def create_adafruit_section(self, parent_layout):
         """Create Adafruit.IO configuration section"""
         # Section title
         section_title = QLabel('🌡️ Adafruit.IO Integration')
         section_title.setStyleSheet("""
             QLabel {
-                font-size: 18px;
+                font-size: 20px;
                 font-weight: bold;
                 color: #2196F3;
-                margin: 10px 5px;
-                padding: 5px;
+                margin: 5px 0px 10px 0px;
+                padding: 8px;
             }
         """)
-        self.main_layout.addWidget(section_title)
+        parent_layout.addWidget(section_title)
         
         # Configuration card
         config_widget = QWidget()
@@ -305,17 +340,20 @@ class SettingsConnectionsScreen(BaseScreen):
         """)
         
         config_layout = QVBoxLayout(config_widget)
-        config_layout.setContentsMargins(20, 20, 20, 20)
+        config_layout.setContentsMargins(15, 15, 15, 15)
+        config_layout.setSpacing(10)
         
         # Status info
         self.adafruit_status_label = QLabel('Checking connection status...')
         self.adafruit_status_label.setStyleSheet("""
             QLabel {
-                font-size: 14px;
+                font-size: 16px;
                 color: #666;
-                margin: 5px 0;
-                padding: 5px;
+                margin: 2px 0;
+                padding: 8px;
                 font-weight: bold;
+                background-color: #f8f9fa;
+                border-radius: 4px;
             }
         """)
         self.adafruit_status_label.setWordWrap(True)
@@ -324,16 +362,15 @@ class SettingsConnectionsScreen(BaseScreen):
         # Description
         desc_label = QLabel(
             'Configure Adafruit.IO integration for remote temperature and humidity monitoring. '
-            'This allows you to view sensor data from anywhere and receive alerts when '
-            'habitat conditions are outside safe ranges.'
+            'View sensor data from anywhere and receive alerts when habitat conditions are outside safe ranges.'
         )
         desc_label.setStyleSheet("""
             QLabel {
-                font-size: 12px;
-                color: #777;
-                margin: 5px 0 15px 0;
+                font-size: 14px;
+                color: #666;
+                margin: 5px 0 10px 0;
                 padding: 5px;
-                line-height: 1.4;
+                line-height: 1.3;
             }
         """)
         desc_label.setWordWrap(True)
@@ -350,74 +387,76 @@ class SettingsConnectionsScreen(BaseScreen):
                 background-color: #2196F3;
                 color: white;
                 border: none;
-                border-radius: 8px;
-                padding: 12px 15px;
+                border-radius: 6px;
+                padding: 10px 12px;
                 font-weight: bold;
-                font-size: 14px;
+                font-size: 15px;
                 text-align: center;
             }
             QPushButton:hover { background-color: #1976D2; }
             QPushButton:pressed { background-color: #1565C0; }
         """)
-        configure_btn.setMinimumHeight(50)
-        configure_btn.setSizePolicy(configure_btn.sizePolicy().Expanding, configure_btn.sizePolicy().Fixed)
-        button_layout.addWidget(configure_btn)
+        configure_btn.setMinimumHeight(45)
+        configure_btn.setMaximumHeight(45)
+        button_layout.addWidget(configure_btn, 2)
         
         # Test connection button
-        test_btn = create_icon_button('activity', 'Test Connection', (20, 20), self.test_adafruit_connection)
+        test_btn = create_icon_button('activity', 'Test Connection', (18, 18), self.test_adafruit_connection)
         test_btn.setStyleSheet("""
             QPushButton {
                 background-color: #FF9800;
                 color: white;
                 border: none;
-                border-radius: 8px;
-                padding: 12px 15px;
+                border-radius: 6px;
+                padding: 10px 12px;
                 font-weight: bold;
-                font-size: 14px;
+                font-size: 15px;
                 text-align: center;
             }
             QPushButton:hover { background-color: #F57C00; }
             QPushButton:pressed { background-color: #E65100; }
         """)
-        test_btn.setMinimumHeight(50)
-        test_btn.setFixedWidth(180)
-        button_layout.addWidget(test_btn)
+        test_btn.setMinimumHeight(45)
+        test_btn.setMaximumHeight(45)
+        test_btn.setMinimumWidth(160)
+        test_btn.setMaximumWidth(160)
+        button_layout.addWidget(test_btn, 1)
         
         config_layout.addLayout(button_layout)
-        self.main_layout.addWidget(config_widget)
+        parent_layout.addWidget(config_widget)
         
         # Update status
         self.update_adafruit_status()
     
-    def create_sensor_section(self):
+    def create_sensor_section(self, parent_layout):
         """Create local sensor configuration section"""
         # Section title
         section_title = QLabel('🔧 Local Sensors')
         section_title.setStyleSheet("""
             QLabel {
-                font-size: 18px;
+                font-size: 20px;
                 font-weight: bold;
                 color: #4CAF50;
-                margin: 20px 5px 10px 5px;
-                padding: 5px;
+                margin: 15px 0px 10px 0px;
+                padding: 8px;
             }
         """)
-        self.main_layout.addWidget(section_title)
+        parent_layout.addWidget(section_title)
         
         # Sensor info card
         sensor_widget = QWidget()
         sensor_widget.setStyleSheet("""
             QWidget {
-                background-color: #f5f5f5;
+                background-color: #f8f9fa;
                 border: 2px solid #e0e0e0;
                 border-radius: 8px;
-                padding: 5px;
-                margin: 5px;
+                margin: 5px 0;
             }
         """)
         
         sensor_layout = QVBoxLayout(sensor_widget)
-        sensor_layout.setContentsMargins(20, 20, 20, 20)
+        sensor_layout.setContentsMargins(15, 15, 15, 15)
+        sensor_layout.setSpacing(8)
         
         # Coming soon message
         coming_soon_label = QLabel('🚧 Local sensor configuration coming soon!')
@@ -426,7 +465,8 @@ class SettingsConnectionsScreen(BaseScreen):
                 font-size: 16px;
                 font-weight: bold;
                 color: #FF9800;
-                margin-bottom: 10px;
+                margin-bottom: 5px;
+                padding: 5px;
             }
         """)
         sensor_layout.addWidget(coming_soon_label)
@@ -441,43 +481,46 @@ class SettingsConnectionsScreen(BaseScreen):
         )
         sensor_desc.setStyleSheet("""
             QLabel {
-                font-size: 12px;
+                font-size: 13px;
                 color: #666;
+                margin: 2px 0;
+                padding: 5px;
+                line-height: 1.3;
             }
         """)
         sensor_layout.addWidget(sensor_desc)
         
-        self.main_layout.addWidget(sensor_widget)
+        parent_layout.addWidget(sensor_widget)
     
-    def create_network_section(self):
+    def create_network_section(self, parent_layout):
         """Create network settings section"""
         # Section title
         section_title = QLabel('📡 Network Settings')
         section_title.setStyleSheet("""
             QLabel {
-                font-size: 18px;
+                font-size: 20px;
                 font-weight: bold;
                 color: #9C27B0;
-                margin: 20px 5px 10px 5px;
-                padding: 5px;
+                margin: 15px 0px 10px 0px;
+                padding: 8px;
             }
         """)
-        self.main_layout.addWidget(section_title)
+        parent_layout.addWidget(section_title)
         
         # Network info card
         network_widget = QWidget()
         network_widget.setStyleSheet("""
             QWidget {
-                background-color: #f5f5f5;
+                background-color: #f8f9fa;
                 border: 2px solid #e0e0e0;
                 border-radius: 8px;
-                padding: 5px;
-                margin: 5px;
+                margin: 5px 0;
             }
         """)
         
         network_layout = QVBoxLayout(network_widget)
-        network_layout.setContentsMargins(20, 20, 20, 20)
+        network_layout.setContentsMargins(15, 15, 15, 15)
+        network_layout.setSpacing(8)
         
         # Coming soon message
         network_label = QLabel('🚧 Network settings coming soon!')
@@ -486,7 +529,8 @@ class SettingsConnectionsScreen(BaseScreen):
                 font-size: 16px;
                 font-weight: bold;
                 color: #FF9800;
-                margin-bottom: 10px;
+                margin-bottom: 5px;
+                padding: 5px;
             }
         """)
         network_layout.addWidget(network_label)
@@ -501,13 +545,16 @@ class SettingsConnectionsScreen(BaseScreen):
         )
         network_desc.setStyleSheet("""
             QLabel {
-                font-size: 12px;
+                font-size: 13px;
                 color: #666;
+                margin: 2px 0;
+                padding: 5px;
+                line-height: 1.3;
             }
         """)
         network_layout.addWidget(network_desc)
         
-        self.main_layout.addWidget(network_widget)
+        parent_layout.addWidget(network_widget)
         
     def update_adafruit_status(self):
         """Update Adafruit.IO connection status"""
@@ -520,33 +567,39 @@ class SettingsConnectionsScreen(BaseScreen):
                 self.adafruit_status_label.setText('✅ Adafruit.IO configured - Click "Test Connection" to verify')
                 self.adafruit_status_label.setStyleSheet("""
                     QLabel {
-                        font-size: 14px;
+                        font-size: 16px;
                         color: #4CAF50;
-                        margin: 5px 0;
-                        padding: 5px;
+                        margin: 2px 0;
+                        padding: 8px;
                         font-weight: bold;
+                        background-color: #f8f9fa;
+                        border-radius: 4px;
                     }
                 """)
             else:
                 self.adafruit_status_label.setText('⚠️ Adafruit.IO not configured - Click "Configure" to set up')
                 self.adafruit_status_label.setStyleSheet("""
                     QLabel {
-                        font-size: 14px;
+                        font-size: 16px;
                         color: #FF9800;
-                        margin: 5px 0;
-                        padding: 5px;
+                        margin: 2px 0;
+                        padding: 8px;
                         font-weight: bold;
+                        background-color: #f8f9fa;
+                        border-radius: 4px;
                     }
                 """)
         except Exception as e:
             self.adafruit_status_label.setText('❌ Unable to check configuration status')
             self.adafruit_status_label.setStyleSheet("""
                 QLabel {
-                    font-size: 14px;
+                    font-size: 16px;
                     color: #f44336;
-                    margin: 5px 0;
-                    padding: 5px;
+                    margin: 2px 0;
+                    padding: 8px;
                     font-weight: bold;
+                    background-color: #f8f9fa;
+                    border-radius: 4px;
                 }
             """)
     

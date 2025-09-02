@@ -3,8 +3,16 @@ Adafruit.IO utility functions for habitat monitoring
 """
 
 import logging
+import warnings
 from typing import Optional, Dict, Any, Tuple
 from datetime import datetime
+
+# Suppress pkg_resources deprecation warning from Adafruit.IO library
+# This warning comes from the third-party library (adafruit-io v2.8.0), not our code
+# The library uses pkg_resources which is deprecated in setuptools>=81
+# TODO: Monitor for updates to adafruit-io library that fix this deprecation
+# See: https://github.com/adafruit/Adafruit_IO_Python/issues
+warnings.filterwarnings("ignore", message="pkg_resources is deprecated.*")
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -21,7 +29,7 @@ class AdafruitIOConnector:
     def _initialize_client(self):
         """Initialize Adafruit.IO client"""
         try:
-            from adafruit_io.client import Client
+            from Adafruit_IO import Client
             self.client = Client(self.username, self.api_key)
             logger.info("Adafruit.IO client initialized successfully")
         except ImportError:
