@@ -19,11 +19,14 @@ class PlantDatabaseScreen(BaseScreen):
     """Plant database browsing and search screen"""
     
     def __init__(self, db_manager, main_window):
-        super().__init__(db_manager, main_window)
+        # Initialize attributes before calling parent __init__
+        # because parent calls build_ui() which uses these attributes
         self.current_plants = []
         self.plants_per_page = 20
         self.current_page = 0
         self.total_plants = 0
+        
+        super().__init__(db_manager, main_window)
         
     def build_ui(self):
         """Build plant database UI"""
