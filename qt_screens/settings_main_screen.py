@@ -170,7 +170,7 @@ class SettingsMainScreen(BaseScreen):
             with open(version_file, 'r') as f:
                 version_text = f.read().strip()
         except:
-            version_text = 'v0.3.0-qt'  # Fallback
+            version_text = 'v0.3.0-alpha'  # Fallback
             
         # Version label
         version_label = QLabel(f'Version: {version_text}')

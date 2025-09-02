@@ -215,7 +215,7 @@ def main():
     
     # Set application properties
     app.setApplicationName("Tortoise Care Touch")
-    app.setApplicationVersion("0.3.0-qt")
+    app.setApplicationVersion("0.3.0-alpha")
     
     # Enable high DPI scaling for touch displays (Qt 6.0+ handles this automatically)
     # app.setAttribute(Qt.AA_EnableHighDpiScaling, True)  # Deprecated in Qt 6+
