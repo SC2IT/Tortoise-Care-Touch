@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, QGridLayout, QPushButto
 from PySide6.QtCore import Qt
 from .base_screen import BaseScreen
 from .icon_manager import create_icon_button
+from utils.adafruit_io_utils import AdafruitIOConnector
 
 class AdafruitIOConfigDialog(QDialog):
     """Dialog for configuring Adafruit.IO settings"""
@@ -215,7 +216,7 @@ Visit io.adafruit.com to create an account and get your API key.""")
         layout.addLayout(button_layout)
     
     def test_connection(self):
-        """Test Adafruit.IO connection"""
+        """Test Adafruit.IO connection using enhanced utilities"""
         username = self.username_input.text().strip()
         api_key = self.api_key_input.text().strip()
         
@@ -225,34 +226,24 @@ Visit io.adafruit.com to create an account and get your API key.""")
             return
         
         try:
-            # Import and test Adafruit.IO connection
-            from Adafruit_IO import Client
-            aio = Client(username, api_key)
+            # Use the enhanced connector utility
+            connector = AdafruitIOConnector(username, api_key)
+            success, message = connector.test_connection()
             
-            # Try to get user info to test connection
-            user_info = aio.receive_data('test-feed')  # This will fail gracefully if feed doesn't exist
-            
-            QMessageBox.information(self, 'Connection Successful', 
-                                  'Successfully connected to Adafruit.IO!')
+            if success:
+                QMessageBox.information(self, 'Connection Successful', 
+                                      f'✅ {message}\n\nAdafruit.IO connection is working properly!')
+            else:
+                QMessageBox.critical(self, 'Connection Failed', 
+                                   f'❌ {message}\n\nPlease check your credentials and internet connection.')
             
         except ImportError:
             QMessageBox.warning(self, 'Missing Library', 
                               'Adafruit.IO library not installed.\n\n'
-                              'Install with: pip install adafruit-circuitpython-io')
+                              'Install with: pip install adafruit-io')
         except Exception as e:
-            error_msg = str(e)
-            if 'Unauthorized' in error_msg or '401' in error_msg:
-                QMessageBox.critical(self, 'Authentication Failed', 
-                                   'Invalid username or API key.\n\n'
-                                   'Please check your Adafruit.IO credentials.')
-            elif 'Network' in error_msg or 'Connection' in error_msg:
-                QMessageBox.critical(self, 'Network Error', 
-                                   'Unable to connect to Adafruit.IO.\n\n'
-                                   'Please check your internet connection.')
-            else:
-                QMessageBox.information(self, 'Connection Test', 
-                                      f'Connection appears to be working.\n\n'
-                                      f'Note: {error_msg}')
+            QMessageBox.critical(self, 'Unexpected Error', 
+                               f'An unexpected error occurred:\n\n{str(e)}')
     
     def get_settings(self):
         """Get configuration settings from form"""
@@ -607,59 +598,47 @@ class SettingsConnectionsScreen(BaseScreen):
         conn.commit()
     
     def test_adafruit_connection(self):
-        """Test Adafruit.IO connection with current settings"""
+        """Test Adafruit.IO connection with current settings using enhanced utilities"""
         try:
             # Get current settings
-            username = None
-            api_key = None
-            
-            if hasattr(self.db_manager, 'get_setting'):
-                username = self.db_manager.get_setting('adafruit_io_username')
-                api_key = self.db_manager.get_setting('adafruit_io_key')
-            else:
-                # Fallback: direct database query
-                conn = self.db_manager.get_connection()
-                cursor = conn.cursor()
-                cursor.execute('SELECT value FROM settings WHERE key = ?', ('adafruit_io_username',))
-                row = cursor.fetchone()
-                username = row[0] if row else None
-                
-                cursor.execute('SELECT value FROM settings WHERE key = ?', ('adafruit_io_key',))
-                row = cursor.fetchone()
-                api_key = row[0] if row else None
+            username = self.db_manager.get_setting('adafruit_io_username')
+            api_key = self.db_manager.get_setting('adafruit_io_key')
             
             if not username or not api_key:
                 QMessageBox.warning(self, 'Configuration Missing', 
                                   'Please configure Adafruit.IO settings first.')
                 return
             
-            # Test connection
-            from Adafruit_IO import Client
-            aio = Client(username, api_key)
+            # Test connection using enhanced connector
+            connector = AdafruitIOConnector(username, api_key)
+            success, message = connector.test_connection()
             
-            # Try to get a feed list (this will verify connection)
-            feeds = aio.feeds()
-            
-            QMessageBox.information(self, 'Connection Successful', 
-                                  f'Successfully connected to Adafruit.IO!\n\n'
-                                  f'Found {len(feeds)} feeds in your account.')
+            if success:
+                # Also get feed information to show more details
+                temp_feed = self.db_manager.get_setting('temp_feed_name') or 'temperature'
+                humidity_feed = self.db_manager.get_setting('humidity_feed_name') or 'humidity'
+                
+                # Check if specific feeds exist
+                temp_success, temp_value, temp_msg = connector.get_feed_value(temp_feed)
+                humidity_success, humidity_value, humidity_msg = connector.get_feed_value(humidity_feed)
+                
+                details = f"✅ {message}\n\n"
+                details += f"Feed Status:\n"
+                details += f"• Temperature ({temp_feed}): {'✅' if temp_success else '❌'} {temp_msg}\n"
+                details += f"• Humidity ({humidity_feed}): {'✅' if humidity_success else '❌'} {humidity_msg}"
+                
+                QMessageBox.information(self, 'Connection Test Results', details)
+            else:
+                QMessageBox.critical(self, 'Connection Failed', 
+                                   f'❌ {message}\n\nPlease check your configuration.')
             
         except ImportError:
             QMessageBox.warning(self, 'Missing Library', 
                               'Adafruit.IO library not installed.\n\n'
-                              'Install with: pip install adafruit-circuitpython-io')
+                              'Install with: pip install adafruit-io')
         except Exception as e:
-            error_msg = str(e)
-            if 'Unauthorized' in error_msg or '401' in error_msg:
-                QMessageBox.critical(self, 'Authentication Failed', 
-                                   'Invalid username or API key.\n\n'
-                                   'Please check your Adafruit.IO credentials.')
-            elif 'Network' in error_msg or 'Connection' in error_msg:
-                QMessageBox.critical(self, 'Network Error', 
-                                   'Unable to connect to Adafruit.IO.\n\n'
-                                   'Please check your internet connection.')
-            else:
-                QMessageBox.critical(self, 'Connection Error', f'Connection failed:\n\n{error_msg}')
+            QMessageBox.critical(self, 'Unexpected Error', 
+                               f'An unexpected error occurred during testing:\n\n{str(e)}')
     
     def go_back(self):
         """Return to settings main screen"""

@@ -9,6 +9,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QFont
 from .base_screen import BaseScreen
 from .icon_manager import create_icon_button
+from utils.adafruit_io_utils import create_adafruit_connector, get_sensor_thresholds, check_alert_conditions
 import datetime
 
 class HabitatMonitorScreen(BaseScreen):
@@ -347,7 +348,7 @@ class HabitatMonitorScreen(BaseScreen):
             self.auto_refresh_btn.setText('Auto-Refresh: OFF')
     
     def refresh_data(self):
-        """Refresh sensor data from Adafruit.IO"""
+        """Refresh sensor data from Adafruit.IO using enhanced utilities"""
         try:
             # Update connection status
             self.connection_status_label.setText('🔄 Refreshing...')
@@ -359,81 +360,153 @@ class HabitatMonitorScreen(BaseScreen):
                 }
             """)
             
-            # Get Adafruit.IO settings
-            username = self.db_manager.get_setting('adafruit_io_username')
-            api_key = self.db_manager.get_setting('adafruit_io_key')
-            temp_feed = self.db_manager.get_setting('temp_feed_name') or 'temperature'
-            humidity_feed = self.db_manager.get_setting('humidity_feed_name') or 'humidity'
-            
-            if not username or not api_key:
+            # Create Adafruit.IO connector
+            connector = create_adafruit_connector(self.db_manager)
+            if not connector:
                 self.show_configuration_needed()
                 return
             
-            # Try to fetch data from Adafruit.IO
-            try:
-                from Adafruit_IO import Client
-                aio = Client(username, api_key)
-                
-                # Get temperature data
-                try:
-                    temp_data = aio.receive(temp_feed)
-                    temp_value = float(temp_data.value)
-                    self.update_temperature_display(temp_value)
-                except Exception as e:
-                    self.temp_value_label.setText('Error')
-                    self.temp_status_label.setText('Feed not found')
-                    self.temp_status_label.setStyleSheet("""
-                        QLabel {
-                            font-size: 12px;
-                            color: white;
-                            padding: 4px 8px;
-                            border-radius: 12px;
-                            background-color: #f44336;
-                        }
-                    """)
-                
-                # Get humidity data
-                try:
-                    humidity_data = aio.receive(humidity_feed)
-                    humidity_value = float(humidity_data.value)
-                    self.update_humidity_display(humidity_value)
-                except Exception as e:
-                    self.humidity_value_label.setText('Error')
-                    self.humidity_status_label.setText('Feed not found')
-                    self.humidity_status_label.setStyleSheet("""
-                        QLabel {
-                            font-size: 12px;
-                            color: white;
-                            padding: 4px 8px;
-                            border-radius: 12px;
-                            background-color: #f44336;
-                        }
-                    """)
-                
-                # Update connection status
-                self.connection_status_label.setText('✅ Connected to Adafruit.IO')
-                self.connection_status_label.setStyleSheet("""
-                    QLabel {
-                        font-size: 14px;
-                        font-weight: bold;
-                        color: #4CAF50;
-                    }
-                """)
-                
-                # Update last refresh time
-                now = datetime.datetime.now()
-                self.last_update_label.setText(f'Last update: {now.strftime("%H:%M:%S")}')
-                
-            except ImportError:
-                self.show_library_missing()
-            except Exception as e:
-                self.show_connection_error(str(e))
-                
+            # Test connection first
+            success, message = connector.test_connection()
+            if not success:
+                self.show_connection_error(message)
+                return
+            
+            # Get feed names
+            temp_feed = self.db_manager.get_setting('temp_feed_name') or 'temperature'
+            humidity_feed = self.db_manager.get_setting('humidity_feed_name') or 'humidity'
+            
+            # Get sensor data using utility functions
+            feed_data = connector.get_multiple_feeds({
+                'temperature': temp_feed,
+                'humidity': humidity_feed
+            })
+            
+            # Get thresholds
+            thresholds = get_sensor_thresholds(self.db_manager)
+            
+            # Update temperature display
+            temp_data = feed_data.get('temperature', {})
+            if temp_data.get('success'):
+                self.update_temperature_display_enhanced(temp_data['value'], thresholds['temperature'])
+            else:
+                self.show_feed_error('temperature', temp_data.get('message', 'Unknown error'))
+            
+            # Update humidity display
+            humidity_data = feed_data.get('humidity', {})
+            if humidity_data.get('success'):
+                self.update_humidity_display_enhanced(humidity_data['value'], thresholds['humidity'])
+            else:
+                self.show_feed_error('humidity', humidity_data.get('message', 'Unknown error'))
+            
+            # Update connection status
+            self.connection_status_label.setText('✅ Connected to Adafruit.IO')
+            self.connection_status_label.setStyleSheet("""
+                QLabel {
+                    font-size: 14px;
+                    font-weight: bold;
+                    color: #4CAF50;
+                }
+            """)
+            
+            # Update last refresh time
+            now = datetime.datetime.now()
+            self.last_update_label.setText(f'Last update: {now.strftime("%H:%M:%S")}')
+            
+        except ImportError:
+            self.show_library_missing()
         except Exception as e:
             self.show_general_error(str(e))
         
         # Update thresholds display
         self.update_thresholds_display()
+    
+    def update_temperature_display_enhanced(self, temp_value, thresholds):
+        """Update temperature display with enhanced status checking"""
+        self.temp_value_label.setText(f'{temp_value:.1f}°C')
+        
+        # Use utility function for status checking
+        status, color = check_alert_conditions(temp_value, thresholds)
+        
+        # Map status to display text
+        status_map = {
+            'low': 'Too Cold',
+            'high': 'Too Hot',
+            'optimal': 'Optimal'
+        }
+        
+        status_text = status_map.get(status, 'Unknown')
+        
+        self.temp_status_label.setText(status_text)
+        self.temp_status_label.setStyleSheet(f"""
+            QLabel {{
+                font-size: 12px;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 12px;
+                background-color: {color};
+                font-weight: bold;
+            }}
+        """)
+    
+    def update_humidity_display_enhanced(self, humidity_value, thresholds):
+        """Update humidity display with enhanced status checking"""
+        self.humidity_value_label.setText(f'{humidity_value:.1f}%')
+        
+        # Use utility function for status checking
+        status, color = check_alert_conditions(humidity_value, thresholds)
+        
+        # Map status to display text for humidity
+        status_map = {
+            'low': 'Too Dry',
+            'high': 'Too Humid', 
+            'optimal': 'Optimal'
+        }
+        
+        status_text = status_map.get(status, 'Unknown')
+        
+        self.humidity_status_label.setText(status_text)
+        self.humidity_status_label.setStyleSheet(f"""
+            QLabel {{
+                font-size: 12px;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 12px;
+                background-color: {color};
+                font-weight: bold;
+            }}
+        """)
+    
+    def show_feed_error(self, sensor_type, message):
+        """Show error for specific feed"""
+        if sensor_type == 'temperature':
+            self.temp_value_label.setText('Error')
+            self.temp_status_label.setText('Feed Error')
+            status_label = self.temp_status_label
+        else:
+            self.humidity_value_label.setText('Error')
+            self.humidity_status_label.setText('Feed Error')
+            status_label = self.humidity_status_label
+        
+        status_label.setStyleSheet("""
+            QLabel {
+                font-size: 12px;
+                color: white;
+                padding: 4px 8px;
+                border-radius: 12px;
+                background-color: #f44336;
+            }
+        """)
+        
+        # Update alerts label with specific error
+        self.alerts_label.setText(f'⚠️ {sensor_type.title()} feed error: {message}')
+        self.alerts_label.setStyleSheet("""
+            QLabel {
+                font-size: 14px;
+                color: #f44336;
+                font-weight: bold;
+            }
+        """)
     
     def update_temperature_display(self, temp_value):
         """Update temperature display"""
@@ -550,7 +623,7 @@ class HabitatMonitorScreen(BaseScreen):
         
         QMessageBox.warning(self, 'Missing Library', 
                           'Adafruit.IO library not installed.\n\n'
-                          'Install with: pip install adafruit-circuitpython-io')
+                          'Install with: pip install adafruit-io')
     
     def show_connection_error(self, error_msg):
         """Show connection error"""
