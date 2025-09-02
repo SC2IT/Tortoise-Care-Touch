@@ -20,6 +20,7 @@ from qt_screens.settings_connections_screen import SettingsConnectionsScreen
 from qt_screens.habitat_monitor_screen import HabitatMonitorScreen
 from qt_screens.growth_tracking_screen import GrowthTrackingScreen
 from qt_screens.care_reminders_screen import CareRemindersScreen
+from qt_screens.plant_database_screen import PlantDatabaseScreen
 from qt_screens.placeholder_screen import PlaceholderScreen
 from qt_screens.settings_users_screen import SettingsUsersScreen
 from qt_screens.settings_tortoises_screen import SettingsTortoisesScreen
@@ -154,20 +155,7 @@ class TortoiseCareApp(QMainWindow):
         self.stacked_widget.addWidget(self.screens['reminders'])
         
         # Plant database screen
-        self.screens['plants'] = PlaceholderScreen(
-            self.db_manager, self,
-            'Plant Database',
-            'Comprehensive plant safety database with 60+ plants for tortoise feeding.',
-            [
-                'Complete plant safety classifications',
-                'Plant photos (leaves, flowers, full plant)',
-                'Visual plant identification guide',
-                'Scientific names and nutrition info',
-                'Feeding frequency recommendations',
-                'Toxic plant warnings and alternatives',
-                'Search and filter functionality'
-            ]
-        )
+        self.screens['plants'] = PlantDatabaseScreen(self.db_manager, self)
         self.stacked_widget.addWidget(self.screens['plants'])
         
         # About screen

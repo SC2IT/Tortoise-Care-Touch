@@ -42,6 +42,30 @@ The application uses SQLite with the following main tables:
 - `settings` - Configuration storage
 - `plants` - Plant database
 
+## Plant Database
+
+### Current Implementation
+- 4400+ plants with safety classifications, scientific names, nutrition notes
+- Search and filter functionality (by name, safety level)
+- Pagination for performance with large datasets
+- Data sourced from authoritative botanical databases
+
+### Data Sources
+- **The Tortoise Table** (thetortoisetable.org.uk) - Primary safety classifications
+- **Atlas NBN** - UK biodiversity data
+- **GBIF Backbone** - Global biodiversity database  
+- **Plants of the World Online** - Kew Gardens botanical database
+
+### Future Enhancements
+- **Offline Plant Photos**: Would require harvesting/licensing thousands of plant images
+  - Leaf photos for identification
+  - Flower photos for seasonal identification  
+  - Full plant photos for context
+  - Estimated storage: 5-15GB for comprehensive image database
+- **Visual Plant ID**: Machine learning-based plant identification from user photos
+- **Seasonal Availability**: Geographic and seasonal availability data
+- **Local Plant Maps**: Integration with geographic databases for local plant finding
+
 ## Development Environment
 
 - Python 3.13+
