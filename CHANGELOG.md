@@ -2,6 +2,24 @@
 
 All notable changes to Tortoise Care Touch will be documented in this file.
 
+## [0.3.1-alpha] - 2024-09-02
+
+### Enhanced Authentication & Connection Improvements
+
+### Added
+- **Enhanced authentication system** with improved error handling
+- **Connection settings improvements** with better layout and functionality
+- **Adafruit.io integration enhancements** with improved utilities
+
+### Fixed
+- **Connection settings screen layout** - repaired broken layout issues
+- **Authentication error handling** - better user feedback and error recovery
+
+### Technical
+- Improved error handling throughout authentication flows
+- Enhanced Adafruit.io integration with better utilities and connection management
+- Standardized version numbers across all components to v0.3.1-alpha
+
 ## [0.2.3-alpha] - 2024-08-31
 
 ### Tabler Icons Integration

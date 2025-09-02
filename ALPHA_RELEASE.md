@@ -1,4 +1,4 @@
-# 🐢 Tortoise Care Touch - Alpha Release v0.1.0
+# 🐢 Tortoise Care Touch - Alpha Release v0.3.1-alpha
 
 Welcome to the first alpha release of **Tortoise Care Touch** - a comprehensive touch-screen application for Hermann's tortoise care management!
 
@@ -82,7 +82,7 @@ python3 test_orientation.py
 
 ## 📋 **Roadmap to Beta**
 
-### **Next Release (v0.2.0-beta)**
+### **Next Release (v0.4.0-beta)**
 - [ ] Health monitoring integration
 - [ ] Real-time Adafruit.IO habitat monitoring  
 - [ ] Growth tracking with photo import
