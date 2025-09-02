@@ -267,10 +267,16 @@ class SettingsConnectionsScreen(BaseScreen):
         header = self.create_header('🌐 Connections & Sensors', show_back_button=True)
         self.main_layout.addLayout(header)
         
+        # Add some spacing after header
+        self.main_layout.addSpacing(10)
+        
         # Create connection sections
         self.create_adafruit_section()
         self.create_sensor_section()
         self.create_network_section()
+        
+        # Add stretch to push everything up
+        self.main_layout.addStretch()
         
     def create_adafruit_section(self):
         """Create Adafruit.IO configuration section"""
@@ -294,8 +300,7 @@ class SettingsConnectionsScreen(BaseScreen):
                 background-color: white;
                 border: 2px solid #e0e0e0;
                 border-radius: 8px;
-                padding: 5px;
-                margin: 5px;
+                margin: 5px 0;
             }
         """)
         
@@ -308,9 +313,12 @@ class SettingsConnectionsScreen(BaseScreen):
             QLabel {
                 font-size: 14px;
                 color: #666;
-                margin-bottom: 10px;
+                margin: 5px 0;
+                padding: 5px;
+                font-weight: bold;
             }
         """)
+        self.adafruit_status_label.setWordWrap(True)
         config_layout.addWidget(self.adafruit_status_label)
         
         # Description
@@ -323,7 +331,9 @@ class SettingsConnectionsScreen(BaseScreen):
             QLabel {
                 font-size: 12px;
                 color: #777;
-                margin-bottom: 15px;
+                margin: 5px 0 15px 0;
+                padding: 5px;
+                line-height: 1.4;
             }
         """)
         desc_label.setWordWrap(True)
@@ -331,6 +341,7 @@ class SettingsConnectionsScreen(BaseScreen):
         
         # Buttons
         button_layout = QHBoxLayout()
+        button_layout.setSpacing(10)
         
         # Configure button
         configure_btn = create_icon_button('settings', 'Configure Adafruit.IO', (20, 20), self.configure_adafruit)
@@ -340,16 +351,16 @@ class SettingsConnectionsScreen(BaseScreen):
                 color: white;
                 border: none;
                 border-radius: 8px;
-                padding: 10px;
+                padding: 12px 15px;
                 font-weight: bold;
                 font-size: 14px;
-                text-align: left;
-                padding-left: 15px;
+                text-align: center;
             }
             QPushButton:hover { background-color: #1976D2; }
             QPushButton:pressed { background-color: #1565C0; }
         """)
         configure_btn.setMinimumHeight(50)
+        configure_btn.setSizePolicy(configure_btn.sizePolicy().Expanding, configure_btn.sizePolicy().Fixed)
         button_layout.addWidget(configure_btn)
         
         # Test connection button
@@ -360,17 +371,16 @@ class SettingsConnectionsScreen(BaseScreen):
                 color: white;
                 border: none;
                 border-radius: 8px;
-                padding: 10px;
+                padding: 12px 15px;
                 font-weight: bold;
                 font-size: 14px;
-                text-align: left;
-                padding-left: 15px;
+                text-align: center;
             }
             QPushButton:hover { background-color: #F57C00; }
             QPushButton:pressed { background-color: #E65100; }
         """)
         test_btn.setMinimumHeight(50)
-        test_btn.setMaximumWidth(200)
+        test_btn.setFixedWidth(180)
         button_layout.addWidget(test_btn)
         
         config_layout.addLayout(button_layout)
@@ -503,22 +513,17 @@ class SettingsConnectionsScreen(BaseScreen):
         """Update Adafruit.IO connection status"""
         try:
             # Get current settings from database
-            settings = {}
-            if hasattr(self.db_manager, 'get_setting'):
-                username = self.db_manager.get_setting('adafruit_io_username')
-                api_key = self.db_manager.get_setting('adafruit_io_key')
-                
-                if username and api_key:
-                    settings['adafruit_io_username'] = username
-                    settings['adafruit_io_key'] = api_key
+            username = self.db_manager.get_setting('adafruit_io_username')
+            api_key = self.db_manager.get_setting('adafruit_io_key')
             
-            if settings.get('adafruit_io_username') and settings.get('adafruit_io_key'):
+            if username and api_key:
                 self.adafruit_status_label.setText('✅ Adafruit.IO configured - Click "Test Connection" to verify')
                 self.adafruit_status_label.setStyleSheet("""
                     QLabel {
                         font-size: 14px;
                         color: #4CAF50;
-                        margin-bottom: 10px;
+                        margin: 5px 0;
+                        padding: 5px;
                         font-weight: bold;
                     }
                 """)
@@ -528,17 +533,19 @@ class SettingsConnectionsScreen(BaseScreen):
                     QLabel {
                         font-size: 14px;
                         color: #FF9800;
-                        margin-bottom: 10px;
+                        margin: 5px 0;
+                        padding: 5px;
                         font-weight: bold;
                     }
                 """)
-        except Exception:
+        except Exception as e:
             self.adafruit_status_label.setText('❌ Unable to check configuration status')
             self.adafruit_status_label.setStyleSheet("""
                 QLabel {
                     font-size: 14px;
                     color: #f44336;
-                    margin-bottom: 10px;
+                    margin: 5px 0;
+                    padding: 5px;
                     font-weight: bold;
                 }
             """)
