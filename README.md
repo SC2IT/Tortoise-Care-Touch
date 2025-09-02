@@ -50,17 +50,21 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 - Task assignment system for care responsibilities
 - Individual user feeding and care records
 
-### 🐢 **Tortoise Profiles** ✅
-- Individual tortoise management (name, sex, weight)
-- Species tracking (default Hermann's tortoise)
-- Growth monitoring framework
+### 🐢 **Tortoise Profiles** ✅ ENHANCED!
+- **Complete tortoise management** with physical descriptions for identification
+- **Photo upload system** accessible from mobile phones via local network
+- **Large 400x400px photos** with rounded corners for accurate tortoise identification
+- **Birthday/acquisition date handling** with checkbox for unknown birthdates
+- Species tracking (default Hermann's tortoise) with subspecies support
+- **Edit and deactivate** functionality for comprehensive profile management
 
-### 📱 **Touch Interface** ✅
-- **Optimized for Pi Touch Display 2** (720x1280 resolution)
+### 📱 **Touch Interface** ✅ ENHANCED!
+- **Optimized for 7-inch landscape touch displays** (1280x720 resolution)
 - **Native Qt touch handling** with proper gesture recognition
-- **Large, finger-friendly buttons** and minimal typing required
+- **Large, finger-friendly buttons** (60px+ height) and minimal typing required
 - **Professional Qt styling** with hover effects and touch feedback
-- **Scrollable content areas** for detailed information display
+- **Tortoise selection screens** with large photos for accurate identification
+- **Mobile photo upload interface** for seamless device integration
 
 ### ⚙️ **Settings & Configuration** ✅
 - **Individual settings screens** for each category
@@ -70,30 +74,38 @@ A comprehensive touch-screen tortoise care tracking application designed for **R
 
 ## 🚧 Upcoming Features
 
-### 📊 **Health Records Management** 🔄
-- Digital vet visit records and health observation tracking
-- Photo documentation and medication scheduling
+### 📊 **Health Records Management** ✅ NEW!
+- **Complete health records system** with CRUD operations
+- **Digital vet visit records** and health observation tracking
+- **Photo documentation** and medication scheduling
+- **Priority-based tracking** (urgent, high, medium, low)
+- **Multi-user health record management** with user attribution
+- **Comprehensive health summaries** and statistics tracking
 
-### 🌡️ **Habitat Monitoring** 🔄
-- Real-time temperature and humidity via Adafruit.IO
+### 🌡️ **Habitat Monitoring** ✅ NEW!
+- **Habitat monitoring interface** with placeholder for sensor integration
+- Real-time temperature and humidity via Adafruit.IO (configuration ready)
 - Alert system for out-of-range conditions
-- Historical data logging and charts
+- Historical data logging and charts framework
 
-### 📈 **Growth Tracking** 🔄
-- Photo import from iPhone/mobile devices
-- Weight and size measurement tracking
-- Growth charts and progress visualization
+### 📈 **Growth Tracking** ✅ NEW!
+- **Growth tracking interface** with measurement recording system
+- Photo import from mobile devices via upload server
+- Weight and size measurement tracking framework
+- Growth charts and progress visualization (ready for data)
 
-### ⏰ **Care Reminders** 🔄
-- Task scheduling and notifications
-- Daily, weekly, monthly care routines
-- Task completion tracking
+### ⏰ **Care Reminders** ✅ NEW!
+- **Care reminders management system** with task scheduling
+- Daily, weekly, monthly care routines framework
+- Task completion tracking and notification system
+- Multi-user reminder assignments
 
 ## Hardware Requirements
 
 - Raspberry Pi 4 (2GB+ recommended) 
-- Raspberry Pi Touch Display 2 (7" 720x1280 portrait)
-- MicroSD card (16GB+ recommended)
+- 7-inch Touch Display (1280x720 landscape orientation)
+- MicroSD card (16GB+ recommended) 
+- WiFi connection for mobile photo uploads
 - Optional: Adafruit sensors for habitat monitoring
 
 ## Installation
@@ -159,10 +171,19 @@ The application automatically creates an SQLite database on first run. No manual
 3. Create feeds for temperature and humidity
 4. Configure settings in the application Settings screen
 
-### Photo Import
-- Set up a folder for automatic photo import
-- Photos copied to this folder will be automatically imported
-- Supports various photo formats and mobile device sharing
+### Mobile Photo Upload System ✅ NEW!
+The application includes a built-in web server for easy photo uploads from mobile devices:
+
+1. **Automatic server startup** - Photo server starts automatically with the application
+2. **Mobile access** - Connect to the Pi from your phone via WiFi
+3. **Simple upload interface** - Drag and drop or browse to upload photos
+4. **Direct tortoise association** - Photos are automatically linked to selected tortoises
+5. **Local network only** - Secure, no internet required
+
+**How to use:**
+- Note the server URL displayed when the app starts (e.g., http://192.168.1.100:5555)
+- Visit this URL on your phone's web browser
+- Select tortoise and upload photos directly
 
 ## Database Structure
 
