@@ -458,6 +458,7 @@ class PlantDatabaseScreen(BaseScreen):
             try:
                 from pathlib import Path
                 photo_file = Path(photo_path)
+                
                 if photo_file.exists():
                     pixmap = QPixmap(str(photo_file))
                     if not pixmap.isNull():
