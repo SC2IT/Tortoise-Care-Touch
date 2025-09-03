@@ -1,0 +1,22 @@
+{
+  "license": "CC Attribution-NoDerivs 2.0 Generic",
+  "license_url": "https://creativecommons.org/licenses/by-nd/2.0/",
+  "source": "The Tortoise Table (thetortoisetable.org.uk)",
+  "implementation_date": "2025-09-02",
+  "status": "placeholder_photos_only",
+  "usage_notes": "Photos must be attributed to The Tortoise Table. No derivatives allowed.",
+  "current_photos": {
+    "type": "generated_placeholders", 
+    "description": "Locally generated placeholder images for development and testing",
+    "license_status": "no_external_license_required",
+    "created_by": "Tortoise Care Touch application",
+    "count": 64
+  },
+  "planned_real_photos": {
+    "source": "The Tortoise Table (thetortoisetable.org.uk)",
+    "license": "CC Attribution-NoDerivs 2.0 Generic", 
+    "implementation_status": "pending",
+    "attribution_required": "Plant photos courtesy of The Tortoise Table (thetortoisetable.org.uk), licensed under CC Attribution-NoDerivs 2.0 Generic"
+  },
+  "plants": {}
+}

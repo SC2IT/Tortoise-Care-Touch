@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (QVBoxLayout, QHBoxLayout, QGridLayout, QPushButto
                               QLabel, QLineEdit, QScrollArea, QWidget, QMessageBox,
                               QComboBox, QTextEdit, QFrame, QSizePolicy)
 from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QPixmap, QFont
 from .base_screen import BaseScreen
 from .icon_manager import create_icon_button
 
@@ -271,7 +272,7 @@ class PlantDatabaseScreen(BaseScreen):
             offset = self.current_page * self.plants_per_page
             data_query = f"""
                 SELECT name, scientific_name, safety_level, nutrition_notes, 
-                       feeding_frequency, description 
+                       feeding_frequency, description, main_photo_path
                 {base_query}
                 ORDER BY safety_level DESC, name ASC
                 LIMIT ? OFFSET ?
@@ -324,7 +325,7 @@ class PlantDatabaseScreen(BaseScreen):
     
     def create_plant_card(self, plant):
         """Create a card widget for a plant"""
-        name, scientific_name, safety_level, nutrition_notes, feeding_frequency, description = plant
+        name, scientific_name, safety_level, nutrition_notes, feeding_frequency, description, photo_path = plant
         
         card = QFrame()
         
@@ -347,8 +348,17 @@ class PlantDatabaseScreen(BaseScreen):
             }}
         """)
         
-        layout = QVBoxLayout(card)
-        layout.setSpacing(5)
+        # Main layout - horizontal with photo and content
+        main_layout = QHBoxLayout(card)
+        main_layout.setSpacing(10)
+        
+        # Photo section
+        photo_widget = self.create_photo_widget(photo_path, name)
+        main_layout.addWidget(photo_widget)
+        
+        # Content section
+        content_layout = QVBoxLayout()
+        content_layout.setSpacing(5)
         
         # Header row with name and safety level
         header_layout = QHBoxLayout()
@@ -380,7 +390,7 @@ class PlantDatabaseScreen(BaseScreen):
         """)
         header_layout.addWidget(safety_badge)
         
-        layout.addLayout(header_layout)
+        content_layout.addLayout(header_layout)
         
         # Scientific name
         if scientific_name:
@@ -392,7 +402,7 @@ class PlantDatabaseScreen(BaseScreen):
                     margin-bottom: 5px;
                 }}
             """)
-            layout.addWidget(sci_label)
+            content_layout.addWidget(sci_label)
         
         # Details
         details = []
@@ -414,9 +424,53 @@ class PlantDatabaseScreen(BaseScreen):
                     line-height: 1.3;
                 }}
             """)
-            layout.addWidget(details_label)
+            content_layout.addWidget(details_label)
+        
+        # Add content layout to main layout
+        main_layout.addLayout(content_layout, 1)  # Give content more space
         
         return card
+    
+    def create_photo_widget(self, photo_path, plant_name):
+        """Create photo widget for plant card"""
+        photo_label = QLabel()
+        photo_label.setFixedSize(80, 80)
+        photo_label.setAlignment(Qt.AlignCenter)
+        photo_label.setStyleSheet("""
+            QLabel {
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                background-color: #f9f9f9;
+            }
+        """)
+        
+        if photo_path:
+            try:
+                from pathlib import Path
+                photo_file = Path(photo_path)
+                if photo_file.exists():
+                    pixmap = QPixmap(str(photo_file))
+                    if not pixmap.isNull():
+                        # Scale pixmap to fit while maintaining aspect ratio
+                        scaled_pixmap = pixmap.scaled(76, 76, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                        photo_label.setPixmap(scaled_pixmap)
+                        return photo_label
+            except Exception as e:
+                print(f"Error loading photo for {plant_name}: {e}")
+        
+        # Show placeholder if no photo
+        photo_label.setText("📷\nNo Photo")
+        photo_label.setStyleSheet("""
+            QLabel {
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                background-color: #f9f9f9;
+                color: #999;
+                font-size: 10px;
+            }
+        """)
+        
+        return photo_label
     
     def update_navigation(self):
         """Update pagination controls"""
