@@ -87,6 +87,7 @@ class PlantDatabaseScreen(BaseScreen):
         # Safety filter
         self.safety_filter = QComboBox()
         self.safety_filter.addItems(['All Plants', 'Safe Only', 'Caution', 'Toxic Only'])
+        self.safety_filter.setCurrentText('All Plants')  # Explicitly set default
         self.safety_filter.setStyleSheet("""
             QComboBox {
                 font-size: 14px;
@@ -94,6 +95,15 @@ class PlantDatabaseScreen(BaseScreen):
                 border: 2px solid #ccc;
                 border-radius: 5px;
                 background-color: white;
+                min-width: 120px;
+            }
+            QComboBox::drop-down {
+                border: none;
+                width: 20px;
+            }
+            QComboBox::down-arrow {
+                width: 12px;
+                height: 12px;
             }
         """)
         self.safety_filter.currentTextChanged.connect(self.on_filter_changed)
