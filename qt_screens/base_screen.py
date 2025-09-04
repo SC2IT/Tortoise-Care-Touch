@@ -6,6 +6,27 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QL
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 
+# Import our sophisticated design system
+try:
+    from design_system.colors import APP_COLORS
+except ImportError:
+    # Fallback colors if design system not available
+    APP_COLORS = {
+        'core': {
+            'blue_gray': '#5a7a8a',
+            'purple_gray': '#6b5a8a', 
+            'teal_gray': '#5a8a7a',
+        },
+        'extended': {
+            'success': '#28a745',
+            'warning': '#ffc107',
+            'error': '#dc3545',
+        },
+        'text': {
+            'secondary': '#333333'
+        }
+    }
+
 class BaseScreen(QWidget):
     """Base class for all application screens with common UI elements"""
     
@@ -40,93 +61,93 @@ class BaseScreen(QWidget):
         button.setFont(font)
         
         # Set minimum height for touch interface
-        button.setMinimumHeight(60)
+        button.setMinimumHeight(65)  # Touch-friendly height
         
-        # Apply styling based on class
+        # Apply styling with design system colors - optimized for touch
         if style_class == 'primary':
-            button.setStyleSheet("""
-                QPushButton {
-                    background-color: #4CAF50;
+            button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {APP_COLORS['core']['blue_gray']};
                     color: white;
                     border: none;
-                    border-radius: 8px;
-                    padding: 10px;
+                    border-radius: 10px;
+                    padding: 12px;
                     font-weight: bold;
-                }
-                QPushButton:hover {
-                    background-color: #45a049;
-                }
-                QPushButton:pressed {
-                    background-color: #3d8b40;
-                }
+                }}
+                QPushButton:hover {{
+                    background-color: {APP_COLORS['blue_gray_family']['dark']};
+                }}
+                QPushButton:pressed {{
+                    background-color: {APP_COLORS['blue_gray_family']['darker']};
+                }}
             """)
         elif style_class == 'secondary':
-            button.setStyleSheet("""
-                QPushButton {
-                    background-color: #2196F3;
+            button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {APP_COLORS['core']['teal_gray']};
                     color: white;
                     border: none;
-                    border-radius: 8px;
-                    padding: 10px;
+                    border-radius: 10px;
+                    padding: 12px;
                     font-weight: bold;
-                }
-                QPushButton:hover {
-                    background-color: #1976D2;
-                }
-                QPushButton:pressed {
-                    background-color: #1565C0;
-                }
+                }}
+                QPushButton:hover {{
+                    background-color: {APP_COLORS['teal_gray_family']['dark']};
+                }}
+                QPushButton:pressed {{
+                    background-color: {APP_COLORS['teal_gray_family']['darker']};
+                }}
             """)
         elif style_class == 'warning':
-            button.setStyleSheet("""
-                QPushButton {
-                    background-color: #FF9800;
+            button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {APP_COLORS['core']['purple_gray']};
                     color: white;
                     border: none;
-                    border-radius: 8px;
-                    padding: 10px;
+                    border-radius: 10px;
+                    padding: 12px;
                     font-weight: bold;
-                }
-                QPushButton:hover {
-                    background-color: #F57C00;
-                }
-                QPushButton:pressed {
-                    background-color: #E65100;
-                }
+                }}
+                QPushButton:hover {{
+                    background-color: {APP_COLORS['purple_gray_family']['dark']};
+                }}
+                QPushButton:pressed {{
+                    background-color: {APP_COLORS['purple_gray_family']['darker']};
+                }}
             """)
         elif style_class == 'danger':
-            button.setStyleSheet("""
-                QPushButton {
-                    background-color: #f44336;
+            button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {APP_COLORS['extended']['error']};
                     color: white;
                     border: none;
-                    border-radius: 8px;
-                    padding: 10px;
+                    border-radius: 10px;
+                    padding: 12px;
                     font-weight: bold;
-                }
-                QPushButton:hover {
-                    background-color: #d32f2f;
-                }
-                QPushButton:pressed {
-                    background-color: #b71c1c;
-                }
+                }}
+                QPushButton:hover {{
+                    background-color: #c82333;
+                }}
+                QPushButton:pressed {{
+                    background-color: #a71e2a;
+                }}
             """)
         else:  # default
-            button.setStyleSheet("""
-                QPushButton {
-                    background-color: #757575;
+            button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {APP_COLORS['text']['secondary']};
                     color: white;
                     border: none;
-                    border-radius: 8px;
-                    padding: 10px;
+                    border-radius: 10px;
+                    padding: 12px;
                     font-weight: bold;
-                }
-                QPushButton:hover {
-                    background-color: #616161;
-                }
-                QPushButton:pressed {
-                    background-color: #424242;
-                }
+                }}
+                QPushButton:hover {{
+                    background-color: {APP_COLORS['text']['muted']};
+                }}
+                QPushButton:pressed {{
+                    background-color: {APP_COLORS['blue_gray_family']['darker']};
+                }}
             """)
         
         # Connect callback
@@ -143,23 +164,24 @@ class BaseScreen(QWidget):
             from .icon_manager import create_icon_button
             back_button = create_icon_button("back", "Back", (24, 24), self.go_back)
             back_button.setMaximumWidth(120)
-            back_button.setStyleSheet("""
-                QPushButton {
-                    background-color: #757575;
+            back_button.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {APP_COLORS['text']['secondary']};
                     color: white;
                     border: none;
-                    border-radius: 8px;
-                    padding: 10px;
+                    border-radius: 10px;
+                    padding: 12px;
                     font-weight: bold;
                     text-align: left;
-                    padding-left: 15px;
-                }
-                QPushButton:hover {
-                    background-color: #616161;
-                }
-                QPushButton:pressed {
-                    background-color: #424242;
-                }
+                    padding-left: 18px;
+                    font-size: 14px;
+                }}
+                QPushButton:hover {{
+                    background-color: {APP_COLORS['text']['muted']};
+                }}
+                QPushButton:pressed {{
+                    background-color: {APP_COLORS['blue_gray_family']['darker']};
+                }}
             """)
             header_layout.addWidget(back_button)
             
@@ -170,7 +192,7 @@ class BaseScreen(QWidget):
         title_font.setBold(True)
         title_label.setFont(title_font)
         title_label.setAlignment(Qt.AlignCenter)
-        title_label.setStyleSheet("color: #2E7D32; margin: 10px;")
+        title_label.setStyleSheet(f"color: {APP_COLORS['core']['blue_gray']}; margin: 10px;")
         
         if show_back_button:
             header_layout.addWidget(title_label, 1)
@@ -195,7 +217,7 @@ class BaseScreen(QWidget):
         font.setBold(True)
         label.setFont(font)
         label.setAlignment(Qt.AlignCenter)
-        label.setStyleSheet("color: #2E7D32; margin: 10px;")
+        label.setStyleSheet(f"color: {APP_COLORS['core']['blue_gray']}; margin: 10px;")
         
         return label
         

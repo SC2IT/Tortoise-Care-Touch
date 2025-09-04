@@ -304,11 +304,12 @@ class DatabaseManager:
             ('Avocado', 'Persea americana', 'toxic', 'Contains persin, toxic to reptiles', 'never')
         ]
         
-        for name, scientific, safety, nutrition, frequency in default_plants:
-            cursor.execute('''
-                INSERT OR IGNORE INTO plants (name, scientific_name, safety_level, nutrition_notes, feeding_frequency) 
-                VALUES (?, ?, ?, ?, ?)
-            ''', (name, scientific, safety, nutrition, frequency))
+        # DISABLED: Default plants insertion - using single source of truth approach
+        # for name, scientific, safety, nutrition, frequency in default_plants:
+        #     cursor.execute('''
+        #         INSERT OR IGNORE INTO plants (name, scientific_name, safety_level, nutrition_notes, feeding_frequency) 
+        #         VALUES (?, ?, ?, ?, ?)
+        #     ''', (name, scientific, safety, nutrition, frequency))
         
         # Insert default user if none exist
         cursor.execute('SELECT COUNT(*) FROM users')

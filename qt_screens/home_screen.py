@@ -10,6 +10,24 @@ from .base_screen import BaseScreen
 from .icon_manager import create_icon_button, set_button_icon
 from utils.adafruit_io_utils import create_adafruit_connector, get_sensor_thresholds
 
+# Import our sophisticated design system
+try:
+    from design_system.colors import APP_COLORS
+except ImportError:
+    # Fallback colors if design system not available
+    APP_COLORS = {
+        'core': {
+            'blue_gray': '#5a7a8a',
+            'purple_gray': '#6b5a8a', 
+            'teal_gray': '#5a8a7a',
+        },
+        'blue_gray_family': {
+            'lightest': '#e8edf0',
+            'base': '#5a7a8a',
+            'dark': '#4a6673',
+        }
+    }
+
 class HomeScreen(BaseScreen):
     """Main home screen with navigation buttons and status display"""
     
@@ -23,9 +41,9 @@ class HomeScreen(BaseScreen):
         
     def build_ui(self):
         """Build home screen UI"""
-        # Make layout more compact for better space usage
-        self.main_layout.setSpacing(5)  # Reduce from default 10px to 5px
-        self.main_layout.setContentsMargins(15, 15, 15, 15)  # Reduce from 20px to 15px
+        # Touch-optimized spacing for better usability
+        self.main_layout.setSpacing(10)  # Consistent 10px spacing
+        self.main_layout.setContentsMargins(15, 15, 15, 15)  # Maintain 15px margins
         
         # App title
         title = self.create_title_label('Tortoise Care Touch', 'large')
@@ -37,7 +55,7 @@ class HomeScreen(BaseScreen):
         time_font.setPointSize(14)
         self.time_label.setFont(time_font)
         self.time_label.setAlignment(Qt.AlignCenter)
-        self.time_label.setStyleSheet("margin: 5px; color: #424242;")
+        self.time_label.setStyleSheet(f"margin: 5px; color: {APP_COLORS['text']['secondary']};")
         self.main_layout.addWidget(self.time_label)
         
         # Status area
@@ -64,18 +82,20 @@ class HomeScreen(BaseScreen):
         self.humidity_label = QLabel('Humidity: --%')
         self.last_feeding_label = QLabel('Last Feeding: --')
         
-        # Style status labels
+        # Style status labels with design system colors
         for label in [self.temp_label, self.humidity_label, self.last_feeding_label]:
             label.setAlignment(Qt.AlignCenter)
-            label.setStyleSheet("""
-                QLabel {
-                    background-color: #E8F5E8;
-                    border: 1px solid #4CAF50;
-                    border-radius: 5px;
-                    padding: 8px;
+            label.setStyleSheet(f"""
+                QLabel {{
+                    background-color: {APP_COLORS['backgrounds']['neutral_light']};
+                    border: 1px solid {APP_COLORS['core']['blue_gray']};
+                    border-radius: 8px;
+                    padding: 12px;
                     margin: 5px;
-                    font-size: 12px;
-                }
+                    font-size: 14px;
+                    font-weight: 500;
+                    min-height: 20px;
+                }}
             """)
             
         status_layout.addWidget(self.temp_label)
@@ -87,7 +107,7 @@ class HomeScreen(BaseScreen):
     def create_navigation_buttons(self):
         """Create main navigation button grid"""
         nav_layout = QGridLayout()
-        nav_layout.setSpacing(15)
+        nav_layout.setSpacing(15)  # Touch-friendly button spacing
         
         # Navigation buttons with PNG icons and colors
         buttons = [
@@ -105,89 +125,89 @@ class HomeScreen(BaseScreen):
             # Create button with PNG icon
             button = create_icon_button(icon_name, text, (32, 32), callback)
             
-            # Apply styling based on class
+            # Apply styling with design system colors - optimized for touch
             if style == 'primary':
-                button.setStyleSheet("""
-                    QPushButton {
-                        background-color: #4CAF50;
+                button.setStyleSheet(f"""
+                    QPushButton {{
+                        background-color: {APP_COLORS['core']['blue_gray']};
                         color: white;
                         border: none;
-                        border-radius: 8px;
-                        padding: 10px;
+                        border-radius: 12px;
+                        padding: 15px;
                         font-weight: bold;
-                        font-size: 16px;
+                        font-size: 18px;
                         text-align: left;
-                        padding-left: 20px;
-                    }
-                    QPushButton:hover {
-                        background-color: #45a049;
-                    }
-                    QPushButton:pressed {
-                        background-color: #3d8b40;
-                    }
+                        padding-left: 25px;
+                    }}
+                    QPushButton:hover {{
+                        background-color: {APP_COLORS['blue_gray_family']['dark']};
+                    }}
+                    QPushButton:pressed {{
+                        background-color: {APP_COLORS['blue_gray_family']['darker']};
+                    }}
                 """)
             elif style == 'danger':
-                button.setStyleSheet("""
-                    QPushButton {
-                        background-color: #f44336;
+                button.setStyleSheet(f"""
+                    QPushButton {{
+                        background-color: {APP_COLORS['core']['teal_gray']};
                         color: white;
                         border: none;
-                        border-radius: 8px;
-                        padding: 10px;
+                        border-radius: 12px;
+                        padding: 15px;
                         font-weight: bold;
-                        font-size: 16px;
+                        font-size: 18px;
                         text-align: left;
-                        padding-left: 20px;
-                    }
-                    QPushButton:hover {
-                        background-color: #d32f2f;
-                    }
-                    QPushButton:pressed {
-                        background-color: #b71c1c;
-                    }
+                        padding-left: 25px;
+                    }}
+                    QPushButton:hover {{
+                        background-color: {APP_COLORS['teal_gray_family']['dark']};
+                    }}
+                    QPushButton:pressed {{
+                        background-color: {APP_COLORS['teal_gray_family']['darker']};
+                    }}
                 """)
             elif style == 'secondary':
-                button.setStyleSheet("""
-                    QPushButton {
-                        background-color: #2196F3;
+                button.setStyleSheet(f"""
+                    QPushButton {{
+                        background-color: {APP_COLORS['analogous']['blue_neighbors'][0]};
                         color: white;
                         border: none;
-                        border-radius: 8px;
-                        padding: 10px;
+                        border-radius: 12px;
+                        padding: 15px;
                         font-weight: bold;
-                        font-size: 16px;
+                        font-size: 18px;
                         text-align: left;
-                        padding-left: 20px;
-                    }
-                    QPushButton:hover {
-                        background-color: #1976D2;
-                    }
-                    QPushButton:pressed {
-                        background-color: #1565C0;
-                    }
+                        padding-left: 25px;
+                    }}
+                    QPushButton:hover {{
+                        background-color: {APP_COLORS['analogous']['blue_neighbors'][1]};
+                    }}
+                    QPushButton:pressed {{
+                        background-color: {APP_COLORS['analogous']['blue_neighbors'][2]};
+                    }}
                 """)
             elif style == 'warning':
-                button.setStyleSheet("""
-                    QPushButton {
-                        background-color: #FF9800;
+                button.setStyleSheet(f"""
+                    QPushButton {{
+                        background-color: {APP_COLORS['core']['purple_gray']};
                         color: white;
                         border: none;
-                        border-radius: 8px;
-                        padding: 10px;
+                        border-radius: 12px;
+                        padding: 15px;
                         font-weight: bold;
-                        font-size: 16px;
+                        font-size: 18px;
                         text-align: left;
-                        padding-left: 20px;
-                    }
-                    QPushButton:hover {
-                        background-color: #F57C00;
-                    }
-                    QPushButton:pressed {
-                        background-color: #E65100;
-                    }
+                        padding-left: 25px;
+                    }}
+                    QPushButton:hover {{
+                        background-color: {APP_COLORS['purple_gray_family']['dark']};
+                    }}
+                    QPushButton:pressed {{
+                        background-color: {APP_COLORS['purple_gray_family']['darker']};
+                    }}
                 """)
             
-            button.setMinimumHeight(80)
+            button.setMinimumHeight(90)  # Touch-friendly height
             nav_layout.addWidget(button, row, col)
             
             col += 1
@@ -213,52 +233,52 @@ class HomeScreen(BaseScreen):
         # Settings button with PNG icon
         settings_button = create_icon_button('settings', 'Settings', (24, 24), 
                                            lambda: self.go_to_screen('settings_main'))
-        settings_button.setStyleSheet("""
-            QPushButton {
-                background-color: #757575;
+        settings_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {APP_COLORS['extended']['nav_secondary']};
                 color: white;
                 border: none;
-                border-radius: 8px;
-                padding: 10px;
+                border-radius: 10px;
+                padding: 12px;
                 font-weight: bold;
-                font-size: 14px;
+                font-size: 16px;
                 text-align: left;
-                padding-left: 15px;
-            }
-            QPushButton:hover {
-                background-color: #616161;
-            }
-            QPushButton:pressed {
-                background-color: #424242;
-            }
+                padding-left: 18px;
+            }}
+            QPushButton:hover {{
+                background-color: {APP_COLORS['purple_gray_family']['dark']};
+            }}
+            QPushButton:pressed {{
+                background-color: {APP_COLORS['purple_gray_family']['darker']};
+            }}
         """)
         settings_button.setMinimumWidth(200)
-        settings_button.setMinimumHeight(60)  # Match About button height for touch usability
+        settings_button.setMinimumHeight(65)  # Touch-friendly height
         bottom_layout.addWidget(settings_button)
         
         # Quit button with icon
         quit_button = create_icon_button('x', 'Quit', (20, 20), self.quit_application)
-        quit_button.setStyleSheet("""
-            QPushButton {
-                background-color: #f44336;
+        quit_button.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {APP_COLORS['extended']['error']};
                 color: white;
                 border: none;
-                border-radius: 8px;
-                padding: 10px;
+                border-radius: 10px;
+                padding: 12px;
                 font-weight: bold;
-                font-size: 14px;
+                font-size: 16px;
                 text-align: left;
-                padding-left: 15px;
-            }
-            QPushButton:hover {
-                background-color: #d32f2f;
-            }
-            QPushButton:pressed {
-                background-color: #b71c1c;
-            }
+                padding-left: 18px;
+            }}
+            QPushButton:hover {{
+                background-color: #c82333;
+            }}
+            QPushButton:pressed {{
+                background-color: #a71e2a;
+            }}
         """)
         quit_button.setMinimumWidth(150)
-        quit_button.setMinimumHeight(60)  # Match About button height for touch usability
+        quit_button.setMinimumHeight(65)  # Touch-friendly height
         bottom_layout.addWidget(quit_button)
         
         self.main_layout.addLayout(bottom_layout)
@@ -284,10 +304,10 @@ class HomeScreen(BaseScreen):
             if not connector:
                 # No configuration - show not configured message
                 self.temp_label.setText('Temperature: Not Configured')
-                self.temp_label.setStyleSheet(self.get_status_style('#9E9E9E'))
+                self.temp_label.setStyleSheet(self.get_status_style(APP_COLORS['text']['muted']))
                 
                 self.humidity_label.setText('Humidity: Not Configured')
-                self.humidity_label.setStyleSheet(self.get_status_style('#9E9E9E'))
+                self.humidity_label.setStyleSheet(self.get_status_style(APP_COLORS['text']['muted']))
                 return
             
             # Get feed names from settings
@@ -306,13 +326,13 @@ class HomeScreen(BaseScreen):
                 
                 if is_stale:
                     self.temp_label.setText(f'Temperature: {temp_value:.1f}°C ⚠️ STALE')
-                    self.temp_label.setStyleSheet(self.get_status_style('#FF9800', warning=True))  # Orange for stale
+                    self.temp_label.setStyleSheet(self.get_status_style(APP_COLORS['extended']['warning'], warning=True))  # Warning orange for stale
                 else:
                     self.temp_label.setText(f'Temperature: {temp_value:.1f}°C')
                     self.temp_label.setStyleSheet(self.get_status_style(temp_status['color']))
             else:
                 self.temp_label.setText(f'Temperature: Error')
-                self.temp_label.setStyleSheet(self.get_status_style('#f44336'))  # Red for error
+                self.temp_label.setStyleSheet(self.get_status_style(APP_COLORS['extended']['error']))  # Error red
             
             # Get humidity data
             humidity_success, humidity_value, humidity_msg = connector.get_feed_value(humidity_feed)
@@ -323,21 +343,21 @@ class HomeScreen(BaseScreen):
                 
                 if is_stale:
                     self.humidity_label.setText(f'Humidity: {humidity_value:.1f}% ⚠️ STALE')
-                    self.humidity_label.setStyleSheet(self.get_status_style('#FF9800', warning=True))  # Orange for stale
+                    self.humidity_label.setStyleSheet(self.get_status_style(APP_COLORS['extended']['warning'], warning=True))  # Warning orange for stale
                 else:
                     self.humidity_label.setText(f'Humidity: {humidity_value:.1f}%')
                     self.humidity_label.setStyleSheet(self.get_status_style(humidity_status['color']))
             else:
                 self.humidity_label.setText(f'Humidity: Error')
-                self.humidity_label.setStyleSheet(self.get_status_style('#f44336'))  # Red for error
+                self.humidity_label.setStyleSheet(self.get_status_style(APP_COLORS['extended']['error']))  # Error red
                 
         except Exception as e:
             # Handle any errors gracefully
             self.temp_label.setText('Temperature: Connection Error')
-            self.temp_label.setStyleSheet(self.get_status_style('#f44336'))
+            self.temp_label.setStyleSheet(self.get_status_style(APP_COLORS['extended']['error']))
             
             self.humidity_label.setText('Humidity: Connection Error')
-            self.humidity_label.setStyleSheet(self.get_status_style('#f44336'))
+            self.humidity_label.setStyleSheet(self.get_status_style(APP_COLORS['extended']['error']))
     
     def check_data_staleness(self, timestamp_msg):
         """Check if data is stale based on timestamp"""
@@ -376,48 +396,50 @@ class HomeScreen(BaseScreen):
     def get_threshold_status(self, value, thresholds):
         """Get status based on threshold comparison"""
         if value < thresholds['min']:
-            return {'status': 'low', 'color': '#2196F3'}  # Blue for low
+            return {'status': 'low', 'color': APP_COLORS['core']['blue_gray']}  # Blue-gray for low
         elif value > thresholds['max']:
-            return {'status': 'high', 'color': '#f44336'}  # Red for high
+            return {'status': 'high', 'color': APP_COLORS['extended']['error']}  # Error red for high
         else:
-            return {'status': 'optimal', 'color': '#4CAF50'}  # Green for optimal
+            return {'status': 'optimal', 'color': APP_COLORS['extended']['success']}  # Success green for optimal
     
     def get_status_style(self, color, warning=False):
-        """Get CSS style for status labels"""
+        """Get CSS style for status labels using design system colors"""
         if warning:
             return f"""
                 QLabel {{
-                    background-color: #FFF3E0;
+                    background-color: {APP_COLORS['backgrounds']['caution_light']};
                     border: 2px solid {color};
-                    border-radius: 5px;
-                    padding: 8px;
+                    border-radius: 8px;
+                    padding: 12px;
                     margin: 5px;
-                    font-size: 12px;
+                    font-size: 14px;
                     font-weight: bold;
-                    color: #E65100;
+                    color: {APP_COLORS['text']['primary']};
+                    min-height: 20px;
                 }}
             """
         else:
-            # Determine background based on color
-            if color == '#4CAF50':  # Green - optimal
-                bg_color = '#E8F5E8'
-            elif color == '#2196F3':  # Blue - low
-                bg_color = '#E3F2FD'
-            elif color == '#f44336':  # Red - high/error
-                bg_color = '#FFEBEE'
-            else:  # Gray - not configured
-                bg_color = '#F5F5F5'
+            # Determine background based on color using design system
+            if color == APP_COLORS['extended']['success']:  # Success green
+                bg_color = APP_COLORS['backgrounds']['safe_light']
+            elif color == APP_COLORS['core']['blue_gray']:  # Blue-gray - low
+                bg_color = APP_COLORS['blue_gray_family']['lightest']
+            elif color == APP_COLORS['extended']['error']:  # Error red
+                bg_color = APP_COLORS['backgrounds']['danger_light']
+            else:  # Muted/not configured
+                bg_color = APP_COLORS['backgrounds']['neutral_light']
             
             return f"""
                 QLabel {{
                     background-color: {bg_color};
                     border: 1px solid {color};
-                    border-radius: 5px;
-                    padding: 8px;
+                    border-radius: 8px;
+                    padding: 12px;
                     margin: 5px;
-                    font-size: 12px;
-                    color: {color};
+                    font-size: 14px;
+                    color: {APP_COLORS['text']['primary']};
                     font-weight: bold;
+                    min-height: 20px;
                 }}
             """
     
@@ -457,18 +479,18 @@ class HomeScreen(BaseScreen):
                 
                 # Color based on time since last feeding
                 if time_diff.days > 1:
-                    self.last_feeding_label.setStyleSheet(self.get_status_style('#f44336'))  # Red if >1 day
+                    self.last_feeding_label.setStyleSheet(self.get_status_style(APP_COLORS['extended']['error']))  # Error red if >1 day
                 elif time_diff.days > 0:
-                    self.last_feeding_label.setStyleSheet(self.get_status_style('#FF9800'))  # Orange if >12 hours
+                    self.last_feeding_label.setStyleSheet(self.get_status_style(APP_COLORS['extended']['warning']))  # Warning orange if >12 hours
                 else:
-                    self.last_feeding_label.setStyleSheet(self.get_status_style('#4CAF50'))  # Green if recent
+                    self.last_feeding_label.setStyleSheet(self.get_status_style(APP_COLORS['extended']['success']))  # Success green if recent
             else:
                 self.last_feeding_label.setText('Last Feeding: No records')
-                self.last_feeding_label.setStyleSheet(self.get_status_style('#9E9E9E'))
+                self.last_feeding_label.setStyleSheet(self.get_status_style(APP_COLORS['text']['muted']))
                 
         except Exception as e:
             self.last_feeding_label.setText('Last Feeding: Database Error')
-            self.last_feeding_label.setStyleSheet(self.get_status_style('#f44336'))
+            self.last_feeding_label.setStyleSheet(self.get_status_style(APP_COLORS['extended']['error']))
         
     def on_enter(self):
         """Called when screen becomes active"""
